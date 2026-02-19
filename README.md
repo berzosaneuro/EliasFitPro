@@ -1,5 +1,18 @@
-# EliasFitPro
+# Neuropresencia
 
-Sitio web profesional de entrenamiento personal. Incluye programas de entrenamiento, calculadoras fitness (IMC, calorías, macros, 1RM), guía de nutrición, testimonios, precios y formulario de contacto.
+Supraconciencia, metacognición y neuroplasticidad para apagar el ruido mental y vivir desde el presente.
 
-**Web:** [eliasfitpro.github.io](https://eliasfitpro.github.io)
+**Autor:** Berzosa Neuro
+
+## Ejecutar localmente
+
+```bash
+npm install
+npm run dev
+```
+
+## Build
+
+```bash
+npm run build
+```
