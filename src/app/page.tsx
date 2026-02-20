@@ -5,13 +5,13 @@ import Container from '@/components/Container'
 import Card from '@/components/Card'
 import FadeInSection from '@/components/FadeInSection'
 import { usePremium } from '@/context/PremiumContext'
-import { Brain, Headphones, BookOpen, ClipboardCheck, Crosshair, Timer, Moon, Zap, ChevronRight, Crown } from 'lucide-react'
+import { Brain, Headphones, BookOpen, ClipboardCheck, Crosshair, Timer, Moon, Zap, ChevronRight, Crown, Sparkles } from 'lucide-react'
 
 const quickActions = [
   { href: '/meditacion', label: 'Meditar', icon: Headphones, color: 'bg-blue-500/15 text-blue-400' },
-  { href: '/test', label: 'Test', icon: ClipboardCheck, color: 'bg-purple-500/15 text-purple-400' },
+  { href: '/despertar', label: 'Despertar', icon: Sparkles, color: 'bg-violet-500/15 text-violet-400' },
   { href: '/biblioteca', label: 'Leer', icon: BookOpen, color: 'bg-cyan-500/15 text-cyan-400' },
-  { href: '/metodo', label: 'Método', icon: Brain, color: 'bg-green-500/15 text-green-400' },
+  { href: '/test', label: 'Test', icon: ClipboardCheck, color: 'bg-purple-500/15 text-purple-400' },
 ]
 
 const meditations = [
@@ -96,6 +96,31 @@ export default function Home() {
                 </p>
               </div>
             </div>
+          </FadeInSection>
+        </Container>
+      </section>
+
+      {/* Despertar en Vida - Hero CTA */}
+      <section className="relative pb-6">
+        <Container>
+          <FadeInSection>
+            <Link href="/despertar" className="block">
+              <div className="rounded-3xl p-5 relative overflow-hidden active:scale-[0.98] transition-transform"
+                style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.12), rgba(244,63,94,0.08))' }}>
+                <div className="absolute inset-0 border border-white/5 rounded-3xl" />
+                <div className="absolute -top-8 -right-8 w-32 h-32 bg-violet-500/10 rounded-full" />
+                <div className="relative flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500/20 to-rose-500/20 flex items-center justify-center shrink-0">
+                    <Sparkles className="w-6 h-6 text-violet-400" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-heading font-semibold text-white text-base mb-0.5">Despertar en Vida</h3>
+                    <p className="text-text-secondary text-xs">No hace falta morir para despertar</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-text-muted shrink-0" />
+                </div>
+              </div>
+            </Link>
           </FadeInSection>
         </Container>
       </section>

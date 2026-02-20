@@ -8,11 +8,11 @@ import { usePremium } from '@/context/PremiumContext'
 
 const links = [
   { href: '/', label: 'Inicio' },
+  { href: '/despertar', label: 'Despertar' },
   { href: '/metodo', label: 'Método' },
   { href: '/meditacion', label: 'Meditación' },
   { href: '/biblioteca', label: 'Biblioteca' },
   { href: '/test', label: 'Test' },
-  { href: '/sobre', label: 'Sobre' },
   { href: '/contacto', label: 'Contacto' },
 ]
 
