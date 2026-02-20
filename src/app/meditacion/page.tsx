@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
 import Container from '@/components/Container'
-import SectionTitle from '@/components/SectionTitle'
 import FadeInSection from '@/components/FadeInSection'
 import MeditationCards from './MeditationCards'
 import PresenceTimer from './PresenceTimer'
@@ -12,40 +11,39 @@ export const metadata: Metadata = {
 
 export default function MeditacionPage() {
   return (
-    <>
-      <section className="pt-24 pb-16">
+    <div className="relative">
+      <div className="orb w-64 h-64 bg-accent-blue top-10 -right-20" />
+
+      <section className="pt-8 md:pt-16 pb-6">
         <Container>
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="font-heading text-4xl md:text-6xl font-bold tracking-tight text-white mb-6 animate-fade-in">
-              SALA DE MEDITACIÓN
+          <div className="md:text-center">
+            <h1 className="font-heading text-3xl md:text-5xl font-bold tracking-tight text-white mb-2 animate-fade-in">
+              Meditación
             </h1>
-            <p className="text-text-secondary text-lg md:text-xl animate-fade-in-up">
-              Apaga el ruido mental. Vuelve al presente.
+            <p className="text-text-secondary text-base animate-fade-in-up">
+              Apaga el ruido. Vuelve al presente.
             </p>
           </div>
         </Container>
       </section>
 
-      <section className="pb-20">
+      <section className="pb-8">
         <Container>
           <FadeInSection>
-            <SectionTitle title="Meditaciones" />
+            <h2 className="font-heading font-semibold text-white text-lg mb-4">Sesiones guiadas</h2>
             <MeditationCards />
           </FadeInSection>
         </Container>
       </section>
 
-      <section className="py-20 border-t border-dark-border">
+      <section className="pb-12">
         <Container>
           <FadeInSection>
-            <SectionTitle
-              title="Temporizador de presencia"
-              subtitle="Elige la duración y practica la atención plena."
-            />
+            <h2 className="font-heading font-semibold text-white text-lg mb-4">Timer de presencia</h2>
             <PresenceTimer />
           </FadeInSection>
         </Container>
       </section>
-    </>
+    </div>
   )
 }

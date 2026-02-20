@@ -15,24 +15,24 @@ export default function PremiumLock({ children, label = 'Contenido Premium' }: P
   if (isPremium) return <>{children}</>
 
   return (
-    <div className="relative">
-      <div className="pointer-events-none select-none blur-sm opacity-40">
+    <div className="relative rounded-2xl overflow-hidden">
+      <div className="pointer-events-none select-none blur-sm opacity-30">
         {children}
       </div>
-      <div className="absolute inset-0 flex flex-col items-center justify-center bg-dark-primary/60 rounded-2xl">
-        <div className="flex flex-col items-center gap-3 p-6 text-center">
-          <div className="w-14 h-14 rounded-full bg-accent-blue/20 flex items-center justify-center">
-            <Lock className="w-7 h-7 text-accent-blue" />
+      <div className="absolute inset-0 flex flex-col items-center justify-center glass rounded-2xl">
+        <div className="flex flex-col items-center gap-2.5 p-5 text-center">
+          <div className="w-12 h-12 rounded-2xl bg-yellow-500/15 flex items-center justify-center">
+            <Lock className="w-5 h-5 text-yellow-400" />
           </div>
-          <p className="text-text-primary font-heading font-semibold text-lg">{label}</p>
-          <p className="text-text-secondary text-sm max-w-xs">
-            Desbloquea todo el contenido con el plan Premium
+          <p className="text-white font-heading font-semibold text-sm">{label}</p>
+          <p className="text-text-secondary text-xs max-w-[200px]">
+            Desbloquea con Premium
           </p>
           <Link
             href="/planes"
-            className="mt-2 inline-flex items-center gap-2 px-5 py-2.5 bg-accent-blue hover:bg-blue-600 text-white rounded-full font-semibold text-sm transition-colors"
+            className="mt-1 inline-flex items-center gap-1.5 px-4 py-2 bg-yellow-500 text-black rounded-full font-semibold text-xs transition-all active:scale-95"
           >
-            <Crown className="w-4 h-4" />
+            <Crown className="w-3.5 h-3.5" />
             Ver planes
           </Link>
         </div>

@@ -7,30 +7,55 @@
 @layer base {
   body {
     @apply bg-dark-primary text-text-primary font-sans;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior: none;
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 
   ::selection {
     @apply bg-accent-blue/30 text-white;
   }
 
+  /* Hide scrollbar for iOS app feel */
   ::-webkit-scrollbar {
-    width: 6px;
+    display: none;
   }
 
-  ::-webkit-scrollbar-track {
-    @apply bg-dark-primary;
+  body {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
-  ::-webkit-scrollbar-thumb {
-    @apply bg-dark-border rounded-full;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-accent-blue/50;
+  /* Safe areas for iPhone notch/dynamic island */
+  :root {
+    --sat: env(safe-area-inset-top, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sal: env(safe-area-inset-left, 0px);
+    --sar: env(safe-area-inset-right, 0px);
   }
 }
 
 @layer components {
+  /* iOS Glass card */
+  .glass {
+    background: rgba(15, 20, 30, 0.65);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .glass-light {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
   .glow-blue {
     box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
   }
@@ -40,12 +65,16 @@
   }
 
   .card-hover {
-    @apply transition-all duration-300 border border-dark-border;
+    @apply transition-all duration-300;
   }
 
   .card-hover:hover {
-    @apply border-accent-blue/50;
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .card-hover:active {
+    transform: scale(0.98);
   }
 
   .fade-in-section {
@@ -54,5 +83,47 @@
 
   .fade-in-section.visible {
     @apply opacity-100 translate-y-0;
+  }
+
+  /* iOS-style pill button */
+  .pill-btn {
+    @apply px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-200;
+  }
+
+  .pill-btn:active {
+    transform: scale(0.95);
+  }
+
+  /* Tab bar */
+  .tab-bar {
+    background: rgba(5, 7, 10, 0.85);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-bottom: max(8px, var(--sab));
+  }
+
+  /* iOS header */
+  .ios-header {
+    background: rgba(5, 7, 10, 0.8);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: max(12px, var(--sat));
+  }
+
+  /* Animated gradient orb */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+    animation: orbFloat 8s ease-in-out infinite;
+  }
+
+  @keyframes orbFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(20px, -20px) scale(1.05); }
+    66% { transform: translate(-10px, 15px) scale(0.95); }
   }
 }

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import BottomTabBar from '@/components/BottomTabBar'
 import PWARegister from '@/components/PWARegister'
 import { PremiumProvider } from '@/context/PremiumContext'
 
@@ -17,11 +18,12 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#3B82F6',
+  themeColor: '#05070A',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -35,8 +37,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <PremiumProvider>
           <PWARegister />
           <Navbar />
-          <main className="min-h-screen">{children}</main>
+          <main className="min-h-screen pb-20 md:pb-0">{children}</main>
           <Footer />
+          <BottomTabBar />
         </PremiumProvider>
       </body>
     </html>
