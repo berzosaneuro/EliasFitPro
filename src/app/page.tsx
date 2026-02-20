@@ -5,13 +5,20 @@ import Container from '@/components/Container'
 import Card from '@/components/Card'
 import FadeInSection from '@/components/FadeInSection'
 import { usePremium } from '@/context/PremiumContext'
-import { Brain, Headphones, BookOpen, ClipboardCheck, Crosshair, Timer, Moon, Zap, ChevronRight, Crown, Sparkles, Activity, AlertCircle, Flame } from 'lucide-react'
+import { Brain, Headphones, BookOpen, ClipboardCheck, Crosshair, Timer, Moon, Zap, ChevronRight, Crown, Sparkles, Activity, AlertCircle, Flame, Calendar, Dumbbell, PenLine, Volume2 } from 'lucide-react'
 
 const quickActions = [
   { href: '/meditacion', label: 'Meditar', icon: Headphones, color: 'bg-blue-500/15 text-blue-400' },
   { href: '/despertar', label: 'Despertar', icon: Sparkles, color: 'bg-violet-500/15 text-violet-400' },
   { href: '/neuroscore', label: 'Score', icon: Activity, color: 'bg-green-500/15 text-green-400' },
   { href: '/sos', label: 'SOS', icon: AlertCircle, color: 'bg-red-500/15 text-red-400' },
+]
+
+const moreActions = [
+  { href: '/programa', label: '21 Días', icon: Calendar, desc: 'Programa completo', color: 'bg-orange-500/15 text-orange-400' },
+  { href: '/ejercicios', label: 'Ejercicios', icon: Dumbbell, desc: 'Metacognición interactiva', color: 'bg-emerald-500/15 text-emerald-400' },
+  { href: '/diario', label: 'Diario', icon: PenLine, desc: 'Registra tu presencia', color: 'bg-cyan-500/15 text-cyan-400' },
+  { href: '/sonidos', label: 'Sonidos', icon: Volume2, desc: 'Ambiente perfecto', color: 'bg-sky-500/15 text-sky-400' },
 ]
 
 const meditations = [
@@ -212,6 +219,28 @@ export default function Home() {
                   </span>
                   <span className="text-text-primary text-sm font-medium">{step.full}</span>
                 </div>
+              ))}
+            </div>
+          </FadeInSection>
+        </Container>
+      </section>
+
+      {/* More tools */}
+      <section className="relative pb-6">
+        <Container>
+          <FadeInSection>
+            <h2 className="font-heading font-semibold text-white text-lg mb-4">Herramientas</h2>
+            <div className="grid grid-cols-2 gap-3">
+              {moreActions.map((action) => (
+                <Link key={action.href} href={action.href} className="block">
+                  <div className="glass rounded-2xl p-4 h-full active:scale-95 transition-transform">
+                    <div className={`w-10 h-10 rounded-xl ${action.color} flex items-center justify-center mb-3`}>
+                      <action.icon className="w-5 h-5" />
+                    </div>
+                    <h3 className="font-medium text-white text-sm mb-0.5">{action.label}</h3>
+                    <p className="text-text-muted text-xs">{action.desc}</p>
+                  </div>
+                </Link>
               ))}
             </div>
           </FadeInSection>

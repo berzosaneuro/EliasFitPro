@@ -9,10 +9,12 @@ import { usePremium } from '@/context/PremiumContext'
 const links = [
   { href: '/', label: 'Inicio' },
   { href: '/despertar', label: 'Despertar' },
+  { href: '/programa', label: '21 Días' },
+  { href: '/meditacion', label: 'Meditar' },
+  { href: '/ejercicios', label: 'Ejercicios' },
+  { href: '/sonidos', label: 'Sonidos' },
+  { href: '/diario', label: 'Diario' },
   { href: '/neuroscore', label: 'Score' },
-  { href: '/meditacion', label: 'Meditación' },
-  { href: '/biblioteca', label: 'Biblioteca' },
-  { href: '/test', label: 'Test' },
   { href: '/sos', label: 'SOS' },
 ]
 
