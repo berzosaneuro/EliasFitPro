@@ -9,11 +9,11 @@ import { usePremium } from '@/context/PremiumContext'
 const links = [
   { href: '/', label: 'Inicio' },
   { href: '/despertar', label: 'Despertar' },
-  { href: '/metodo', label: 'Método' },
+  { href: '/neuroscore', label: 'Score' },
   { href: '/meditacion', label: 'Meditación' },
   { href: '/biblioteca', label: 'Biblioteca' },
   { href: '/test', label: 'Test' },
-  { href: '/contacto', label: 'Contacto' },
+  { href: '/sos', label: 'SOS' },
 ]
 
 export default function Navbar() {
