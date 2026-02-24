@@ -1,14 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Container from '@/components/Container'
 import FadeInSection from '@/components/FadeInSection'
 import {
   Search, UserPlus, Phone, Mail, Calendar, ChevronRight, Filter,
-  User, X, Check
+  User, X, Check, Loader2
 } from 'lucide-react'
-
-const STORAGE_KEY = 'neuropresencia_clientes'
 
 type Cliente = {
   id: string
@@ -23,59 +21,6 @@ type Cliente = {
   sesionesTotales: number
   fechaAlta: string
   tags: string[]
-}
-
-const DEMO_CLIENTES: Cliente[] = [
-  {
-    id: '1', nombre: 'María García López', email: 'maria@email.com', telefono: '+34 612 345 678',
-    estado: 'activo', plan: 'premium', notas: 'Progreso excelente en mindfulness',
-    ultimaSesion: '2026-02-22', proximaSesion: '2026-02-28', sesionesTotales: 24,
-    fechaAlta: '2025-09-15', tags: ['ansiedad', 'meditación']
-  },
-  {
-    id: '2', nombre: 'Carlos Ruiz Martín', email: 'carlos@email.com', telefono: '+34 634 567 890',
-    estado: 'activo', plan: 'premium', notas: 'Trabajando gestión emocional',
-    ultimaSesion: '2026-02-20', proximaSesion: '2026-02-27', sesionesTotales: 12,
-    fechaAlta: '2025-11-03', tags: ['estrés', 'sueño']
-  },
-  {
-    id: '3', nombre: 'Ana Fernández Díaz', email: 'ana@email.com', telefono: '+34 656 789 012',
-    estado: 'nuevo', plan: 'free', notas: 'Primera consulta realizada, interesada en programa 21 días',
-    ultimaSesion: '2026-02-18', proximaSesion: '2026-03-01', sesionesTotales: 1,
-    fechaAlta: '2026-02-18', tags: ['nueva', 'programa-21']
-  },
-  {
-    id: '4', nombre: 'Pablo Sánchez Torres', email: 'pablo@email.com', telefono: '+34 678 901 234',
-    estado: 'potencial', plan: 'ninguno', notas: 'Contactó por Instagram, interesado en sesiones',
-    ultimaSesion: '', proximaSesion: '', sesionesTotales: 0,
-    fechaAlta: '2026-02-23', tags: ['lead', 'instagram']
-  },
-  {
-    id: '5', nombre: 'Laura Moreno Vega', email: 'laura@email.com', telefono: '+34 690 123 456',
-    estado: 'inactivo', plan: 'free', notas: 'No responde desde enero, hacer seguimiento',
-    ultimaSesion: '2026-01-10', proximaSesion: '', sesionesTotales: 8,
-    fechaAlta: '2025-07-20', tags: ['seguimiento', 'reactivar']
-  },
-  {
-    id: '6', nombre: 'Diego Herrera Ruiz', email: 'diego@email.com', telefono: '+34 611 222 333',
-    estado: 'activo', plan: 'premium', notas: 'Sesiones semanales, buen progreso en neuroplasticidad',
-    ultimaSesion: '2026-02-21', proximaSesion: '2026-02-28', sesionesTotales: 32,
-    fechaAlta: '2025-05-10', tags: ['neuroplasticidad', 'avanzado']
-  },
-]
-
-function loadClientes(): Cliente[] {
-  if (typeof window === 'undefined') return []
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw) return JSON.parse(raw)
-  } catch {}
-  return DEMO_CLIENTES
-}
-
-function saveClientes(clientes: Cliente[]) {
-  if (typeof window === 'undefined') return
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(clientes))
 }
 
 const estadoConfig = {
@@ -93,17 +38,30 @@ const planConfig = {
 
 export default function ClientesPage() {
   const [clientes, setClientes] = useState<Cliente[]>([])
-  const [mounted, setMounted] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
   const [busqueda, setBusqueda] = useState('')
   const [filtroEstado, setFiltroEstado] = useState<string>('todos')
   const [selectedCliente, setSelectedCliente] = useState<Cliente | null>(null)
   const [showNuevo, setShowNuevo] = useState(false)
   const [nuevoForm, setNuevoForm] = useState({ nombre: '', email: '', telefono: '', notas: '' })
 
-  useEffect(() => {
-    setMounted(true)
-    setClientes(loadClientes())
+  const fetchClientes = useCallback(async () => {
+    try {
+      const res = await fetch('/api/clients')
+      if (!res.ok) throw new Error('Error loading clients')
+      const data: Cliente[] = await res.json()
+      setClientes(data)
+    } catch (err) {
+      console.error('Failed to fetch clients:', err)
+    } finally {
+      setLoading(false)
+    }
   }, [])
+
+  useEffect(() => {
+    fetchClientes()
+  }, [fetchClientes])
 
   const filtrados = clientes.filter((c) => {
     const matchBusqueda =
@@ -122,46 +80,66 @@ export default function ClientesPage() {
     potenciales: clientes.filter((c) => c.estado === 'potencial').length,
   }
 
-  const addCliente = () => {
+  const addCliente = async () => {
     if (!nuevoForm.nombre.trim()) return
-    const nuevo: Cliente = {
-      id: Date.now().toString(),
-      nombre: nuevoForm.nombre,
-      email: nuevoForm.email,
-      telefono: nuevoForm.telefono,
-      estado: 'potencial',
-      plan: 'ninguno',
-      notas: nuevoForm.notas,
-      ultimaSesion: '',
-      proximaSesion: '',
-      sesionesTotales: 0,
-      fechaAlta: new Date().toISOString().split('T')[0],
-      tags: ['nuevo'],
+    setSaving(true)
+    try {
+      const res = await fetch('/api/clients', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre: nuevoForm.nombre,
+          email: nuevoForm.email,
+          telefono: nuevoForm.telefono,
+          notas: nuevoForm.notas,
+        }),
+      })
+      if (!res.ok) throw new Error('Error creating client')
+      const nuevo: Cliente = await res.json()
+      setClientes((prev) => [nuevo, ...prev])
+      setShowNuevo(false)
+      setNuevoForm({ nombre: '', email: '', telefono: '', notas: '' })
+    } catch (err) {
+      console.error('Failed to add client:', err)
+    } finally {
+      setSaving(false)
     }
-    const updated = [nuevo, ...clientes]
-    setClientes(updated)
-    saveClientes(updated)
-    setShowNuevo(false)
-    setNuevoForm({ nombre: '', email: '', telefono: '', notas: '' })
   }
 
-  const toggleEstado = (id: string) => {
-    const updated = clientes.map((c) => {
-      if (c.id !== id) return c
-      const estados: Cliente['estado'][] = ['potencial', 'nuevo', 'activo', 'inactivo']
-      const idx = estados.indexOf(c.estado)
-      return { ...c, estado: estados[(idx + 1) % estados.length] }
-    })
+  const toggleEstado = async (id: string) => {
+    const cliente = clientes.find((c) => c.id === id)
+    if (!cliente) return
+    const estados: Cliente['estado'][] = ['potencial', 'nuevo', 'activo', 'inactivo']
+    const idx = estados.indexOf(cliente.estado)
+    const nuevoEstado = estados[(idx + 1) % estados.length]
+
+    // Optimistic update
+    const updated = clientes.map((c) =>
+      c.id === id ? { ...c, estado: nuevoEstado } : c
+    )
     setClientes(updated)
-    saveClientes(updated)
     const sel = updated.find((c) => c.id === id)
     if (sel && selectedCliente?.id === id) setSelectedCliente(sel)
+
+    try {
+      const res = await fetch('/api/clients', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, estado: nuevoEstado }),
+      })
+      if (!res.ok) throw new Error('Error updating client')
+    } catch (err) {
+      console.error('Failed to toggle estado:', err)
+      // Revert on failure
+      setClientes(clientes)
+      if (selectedCliente?.id === id) setSelectedCliente(cliente)
+    }
   }
 
-  if (!mounted) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-accent-blue border-t-transparent rounded-full animate-spin" />
+        <Loader2 className="w-8 h-8 text-accent-blue animate-spin" />
       </div>
     )
   }
@@ -433,11 +411,15 @@ export default function ClientesPage() {
               />
               <button
                 onClick={addCliente}
-                disabled={!nuevoForm.nombre.trim()}
+                disabled={!nuevoForm.nombre.trim() || saving}
                 className="w-full py-3 bg-accent-blue rounded-xl text-white font-medium text-sm active:scale-95 transition-transform disabled:opacity-40"
               >
-                <Check className="w-4 h-4 inline mr-2" />
-                Añadir cliente
+                {saving ? (
+                  <Loader2 className="w-4 h-4 inline mr-2 animate-spin" />
+                ) : (
+                  <Check className="w-4 h-4 inline mr-2" />
+                )}
+                {saving ? 'Guardando...' : 'Añadir cliente'}
               </button>
             </div>
           </div>

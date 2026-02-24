@@ -1,14 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Container from '@/components/Container'
 import FadeInSection from '@/components/FadeInSection'
 import {
   Phone, PhoneCall, PhoneOff, PhoneMissed, Calendar, Clock, User,
-  Plus, X, Check, Bell, MessageSquare, ChevronRight, Repeat, Send
+  Plus, X, Check, Bell, MessageSquare, ChevronRight, Repeat, Send, Loader2
 } from 'lucide-react'
-
-const STORAGE_KEY = 'neuropresencia_llamadas'
 
 type Llamada = {
   id: string
@@ -49,53 +47,6 @@ const PLANTILLAS: Plantilla[] = [
   },
 ]
 
-const DEMO_LLAMADAS: Llamada[] = [
-  {
-    id: '1', clienteNombre: 'María García', telefono: '+34 612 345 678',
-    tipo: 'programada', fecha: '2026-02-25', hora: '10:00', duracion: 0,
-    notas: 'Sesión semanal de seguimiento', recordatorio: true, motivo: 'Sesión regular'
-  },
-  {
-    id: '2', clienteNombre: 'Carlos Ruiz', telefono: '+34 634 567 890',
-    tipo: 'programada', fecha: '2026-02-25', hora: '12:30', duracion: 0,
-    notas: 'Revisión de progreso mensual', recordatorio: true, motivo: 'Revisión'
-  },
-  {
-    id: '3', clienteNombre: 'Diego Herrera', telefono: '+34 611 222 333',
-    tipo: 'programada', fecha: '2026-02-26', hora: '16:00', duracion: 0,
-    notas: 'Sesión de neuroplasticidad avanzada', recordatorio: false, motivo: 'Sesión regular'
-  },
-  {
-    id: '4', clienteNombre: 'Ana Fernández', telefono: '+34 656 789 012',
-    tipo: 'completada', fecha: '2026-02-24', hora: '11:00', duracion: 45,
-    notas: 'Primera sesión completa. Muy receptiva.', recordatorio: false, motivo: 'Primera sesión'
-  },
-  {
-    id: '5', clienteNombre: 'Laura Moreno', telefono: '+34 690 123 456',
-    tipo: 'perdida', fecha: '2026-02-22', hora: '09:30', duracion: 0,
-    notas: 'No contestó. Tercer intento.', recordatorio: false, motivo: 'Seguimiento'
-  },
-  {
-    id: '6', clienteNombre: 'Pablo Sánchez', telefono: '+34 678 901 234',
-    tipo: 'programada', fecha: '2026-02-27', hora: '18:00', duracion: 0,
-    notas: 'Llamada de captación inicial', recordatorio: true, motivo: 'Captación'
-  },
-]
-
-function loadLlamadas(): Llamada[] {
-  if (typeof window === 'undefined') return []
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw) return JSON.parse(raw)
-  } catch {}
-  return DEMO_LLAMADAS
-}
-
-function saveLlamadas(llamadas: Llamada[]) {
-  if (typeof window === 'undefined') return
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(llamadas))
-}
-
 const tipoConfig = {
   programada: { color: 'text-accent-blue', bg: 'bg-accent-blue/10', icon: PhoneCall, label: 'Programada' },
   completada: { color: 'text-green-400', bg: 'bg-green-500/10', icon: Phone, label: 'Completada' },
@@ -105,16 +56,31 @@ const tipoConfig = {
 
 export default function LlamadasPage() {
   const [llamadas, setLlamadas] = useState<Llamada[]>([])
-  const [mounted, setMounted] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
   const [tab, setTab] = useState<'agenda' | 'historial' | 'bot'>('agenda')
   const [showNueva, setShowNueva] = useState(false)
   const [showPlantilla, setShowPlantilla] = useState<Plantilla | null>(null)
   const [nuevaForm, setNuevaForm] = useState({ clienteNombre: '', telefono: '', fecha: '', hora: '', notas: '', motivo: '' })
 
-  useEffect(() => {
-    setMounted(true)
-    setLlamadas(loadLlamadas())
+  const fetchLlamadas = useCallback(async () => {
+    try {
+      setLoading(true)
+      const res = await fetch('/api/calls')
+      if (res.ok) {
+        const data: Llamada[] = await res.json()
+        setLlamadas(data)
+      }
+    } catch (err) {
+      console.error('Error fetching calls:', err)
+    } finally {
+      setLoading(false)
+    }
   }, [])
+
+  useEffect(() => {
+    fetchLlamadas()
+  }, [fetchLlamadas])
 
   const hoy = new Date().toISOString().split('T')[0]
   const programadas = llamadas.filter((l) => l.tipo === 'programada').sort((a, b) => `${a.fecha}${a.hora}`.localeCompare(`${b.fecha}${b.hora}`))
@@ -134,47 +100,77 @@ export default function LlamadasPage() {
     perdidas: llamadas.filter((l) => l.tipo === 'perdida').length,
   }
 
-  const addLlamada = () => {
+  const addLlamada = async () => {
     if (!nuevaForm.clienteNombre.trim() || !nuevaForm.fecha || !nuevaForm.hora) return
-    const nueva: Llamada = {
-      id: Date.now().toString(),
-      clienteNombre: nuevaForm.clienteNombre,
-      telefono: nuevaForm.telefono,
-      tipo: 'programada',
-      fecha: nuevaForm.fecha,
-      hora: nuevaForm.hora,
-      duracion: 0,
-      notas: nuevaForm.notas,
-      recordatorio: true,
-      motivo: nuevaForm.motivo || 'Sesión',
+    try {
+      setSubmitting(true)
+      const res = await fetch('/api/calls', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          clienteNombre: nuevaForm.clienteNombre,
+          telefono: nuevaForm.telefono,
+          fecha: nuevaForm.fecha,
+          hora: nuevaForm.hora,
+          notas: nuevaForm.notas,
+          motivo: nuevaForm.motivo || 'Sesión',
+        }),
+      })
+      if (res.ok) {
+        const nueva: Llamada = await res.json()
+        setLlamadas((prev) => [nueva, ...prev])
+        setShowNueva(false)
+        setNuevaForm({ clienteNombre: '', telefono: '', fecha: '', hora: '', notas: '', motivo: '' })
+      }
+    } catch (err) {
+      console.error('Error adding call:', err)
+    } finally {
+      setSubmitting(false)
     }
-    const updated = [nueva, ...llamadas]
-    setLlamadas(updated)
-    saveLlamadas(updated)
-    setShowNueva(false)
-    setNuevaForm({ clienteNombre: '', telefono: '', fecha: '', hora: '', notas: '', motivo: '' })
   }
 
-  const marcarCompletada = (id: string) => {
-    const updated = llamadas.map((l) =>
-      l.id === id ? { ...l, tipo: 'completada' as const, duracion: 45 } : l
-    )
-    setLlamadas(updated)
-    saveLlamadas(updated)
+  const marcarCompletada = async (id: string) => {
+    try {
+      const res = await fetch('/api/calls', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, tipo: 'completada', duracion: 45 }),
+      })
+      if (res.ok) {
+        setLlamadas((prev) =>
+          prev.map((l) =>
+            l.id === id ? { ...l, tipo: 'completada' as const, duracion: 45 } : l
+          )
+        )
+      }
+    } catch (err) {
+      console.error('Error marking call as completed:', err)
+    }
   }
 
-  const marcarPerdida = (id: string) => {
-    const updated = llamadas.map((l) =>
-      l.id === id ? { ...l, tipo: 'perdida' as const } : l
-    )
-    setLlamadas(updated)
-    saveLlamadas(updated)
+  const marcarPerdida = async (id: string) => {
+    try {
+      const res = await fetch('/api/calls', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, tipo: 'perdida' }),
+      })
+      if (res.ok) {
+        setLlamadas((prev) =>
+          prev.map((l) =>
+            l.id === id ? { ...l, tipo: 'perdida' as const } : l
+          )
+        )
+      }
+    } catch (err) {
+      console.error('Error marking call as missed:', err)
+    }
   }
 
-  if (!mounted) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-accent-blue border-t-transparent rounded-full animate-spin" />
+        <Loader2 className="w-8 h-8 text-accent-blue animate-spin" />
       </div>
     )
   }
@@ -487,11 +483,15 @@ export default function LlamadasPage() {
               />
               <button
                 onClick={addLlamada}
-                disabled={!nuevaForm.clienteNombre.trim() || !nuevaForm.fecha || !nuevaForm.hora}
+                disabled={!nuevaForm.clienteNombre.trim() || !nuevaForm.fecha || !nuevaForm.hora || submitting}
                 className="w-full py-3 bg-green-500 rounded-xl text-white font-medium text-sm active:scale-95 transition-transform disabled:opacity-40"
               >
-                <Calendar className="w-4 h-4 inline mr-2" />
-                Agendar llamada
+                {submitting ? (
+                  <Loader2 className="w-4 h-4 inline mr-2 animate-spin" />
+                ) : (
+                  <Calendar className="w-4 h-4 inline mr-2" />
+                )}
+                {submitting ? 'Agendando...' : 'Agendar llamada'}
               </button>
             </div>
           </div>

@@ -5,7 +5,7 @@ import Container from '@/components/Container'
 import FadeInSection from '@/components/FadeInSection'
 import {
   Sparkles, Brain, Target, Users, ChevronRight, Star, Shield, Zap,
-  ArrowRight, Check, Gift, Crown, TrendingUp, Heart, Eye
+  ArrowRight, Check, Gift, Crown, TrendingUp, Heart, Eye, Loader2
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -20,11 +20,23 @@ export default function CaptacionPage() {
   const [email, setEmail] = useState('')
   const [nombre, setNombre] = useState('')
   const [enviado, setEnviado] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [testimonioIdx, setTestimonioIdx] = useState(0)
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!email.trim()) return
+    setLoading(true)
+    try {
+      await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name: nombre, source: 'captacion' }),
+      })
+    } catch {
+      // Still show success
+    }
     setEnviado(true)
+    setLoading(false)
   }
 
   return (
@@ -307,10 +319,10 @@ export default function CaptacionPage() {
                   />
                   <button
                     onClick={handleSubmit}
-                    disabled={!email.trim()}
+                    disabled={!email.trim() || loading}
                     className="px-6 py-3 bg-accent-blue rounded-xl text-white font-medium text-sm active:scale-95 transition-transform disabled:opacity-40"
                   >
-                    Quiero la guía
+                    {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Quiero la guía'}
                   </button>
                 </div>
               ) : (

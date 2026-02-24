@@ -1,14 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Container from '@/components/Container'
 import FadeInSection from '@/components/FadeInSection'
 import {
   Users, MessageCircle, Video, Calendar, Heart, Star, Send,
-  Crown, Flame, Clock, ChevronRight, Radio, Globe, Award, X
+  Crown, Flame, Clock, ChevronRight, Radio, Globe, Award, X, Loader2
 } from 'lucide-react'
-
-const STORAGE_KEY = 'neuropresencia_comunidad'
 
 type Post = {
   id: string
@@ -16,7 +14,7 @@ type Post = {
   avatar: string
   nivel: string
   texto: string
-  timestamp: string
+  created_at: string
   likes: number
   liked: boolean
   replies: number
@@ -59,46 +57,14 @@ const SESIONES_GRUPALES: SesionGrupal[] = [
   },
 ]
 
-const DEMO_POSTS: Post[] = [
-  {
-    id: '1', autor: 'Elena R.', avatar: '🧘‍♀️', nivel: 'Consciente',
-    texto: 'Día 15 del programa y hoy por primera vez experimenté ese "espacio entre pensamientos" del que habla el Dr. Sanz. Fue solo un segundo pero fue REAL. Estoy llorando de emoción.',
-    timestamp: 'hace 2h', likes: 34, liked: false, replies: 12, tag: 'experiencia',
-  },
-  {
-    id: '2', autor: 'Marcos T.', avatar: '🧠', nivel: 'Observador',
-    texto: 'Pregunta para la comunidad: ¿a alguien más le pasa que cuando meditan les surge una resistencia enorme? Como si la mente NO quisiera que observes. Justo ahí está el ego defendiéndose, ¿verdad?',
-    timestamp: 'hace 5h', likes: 21, liked: false, replies: 8, tag: 'pregunta',
-  },
-  {
-    id: '3', autor: 'Dr. Berzosa', avatar: '⚡', nivel: 'Guía',
-    texto: 'Recordad: el despertar no es sentirse bien todo el tiempo. Es ver con claridad, incluso el dolor. La supraconsciencia incluye TODO lo que eres. No rechaces nada. Observa.',
-    timestamp: 'hace 1d', likes: 89, liked: false, replies: 23, tag: 'enseñanza',
-  },
-  {
-    id: '4', autor: 'Sofía L.', avatar: '🌊', nivel: 'Despertando',
-    texto: 'Mi NeuroScore pasó de 30 a 72 en un mes. Los datos no mienten. Esto funciona. Gracias a esta comunidad por el apoyo diario.',
-    timestamp: 'hace 1d', likes: 56, liked: false, replies: 15, tag: 'progreso',
-  },
-  {
-    id: '5', autor: 'Javier M.', avatar: '🔥', nivel: 'Consciente',
-    texto: 'Acabo de hacer la meditación grupal de las 20h. Meditar con 50 personas a la vez tiene una energía completamente diferente. Lo recomiendo a todos.',
-    timestamp: 'hace 2d', likes: 43, liked: false, replies: 7, tag: 'experiencia',
-  },
-]
-
-function loadPosts(): Post[] {
-  if (typeof window === 'undefined') return []
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw) return JSON.parse(raw)
-  } catch {}
-  return DEMO_POSTS
-}
-
-function savePosts(posts: Post[]) {
-  if (typeof window === 'undefined') return
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(posts))
+function timeAgo(dateStr: string): string {
+  const now = new Date()
+  const date = new Date(dateStr)
+  const diff = Math.floor((now.getTime() - date.getTime()) / 1000)
+  if (diff < 60) return 'ahora'
+  if (diff < 3600) return `hace ${Math.floor(diff / 60)}min`
+  if (diff < 86400) return `hace ${Math.floor(diff / 3600)}h`
+  return `hace ${Math.floor(diff / 86400)}d`
 }
 
 const tipoConfig = {
@@ -121,40 +87,75 @@ export default function ComunidadPage() {
   const [tab, setTab] = useState<'foro' | 'sesiones'>('foro')
   const [nuevoPost, setNuevoPost] = useState('')
   const [showNuevoPost, setShowNuevoPost] = useState(false)
+  const [posting, setPosting] = useState(false)
+
+  const loadPosts = useCallback(async () => {
+    try {
+      const res = await fetch('/api/community')
+      if (res.ok) {
+        const data = await res.json()
+        setPosts(data.map((p: Post) => ({ ...p, liked: false })))
+      }
+    } catch {
+      // Silently fail
+    }
+  }, [])
 
   useEffect(() => {
     setMounted(true)
-    setPosts(loadPosts())
-  }, [])
+    loadPosts()
+  }, [loadPosts])
 
-  const toggleLike = (id: string) => {
+  const toggleLike = async (id: string) => {
+    const post = posts.find((p) => p.id === id)
+    if (!post) return
+    const newLikes = post.liked ? post.likes - 1 : post.likes + 1
     const updated = posts.map((p) => {
       if (p.id !== id) return p
-      return { ...p, liked: !p.liked, likes: p.liked ? p.likes - 1 : p.likes + 1 }
+      return { ...p, liked: !p.liked, likes: newLikes }
     })
     setPosts(updated)
-    savePosts(updated)
+
+    try {
+      await fetch('/api/community', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, likes: newLikes }),
+      })
+    } catch {
+      // Revert on error
+      setPosts(posts)
+    }
   }
 
-  const addPost = () => {
+  const addPost = async () => {
     if (!nuevoPost.trim()) return
-    const post: Post = {
-      id: Date.now().toString(),
-      autor: 'Tú',
-      avatar: '🌟',
-      nivel: 'Observador',
-      texto: nuevoPost.trim(),
-      timestamp: 'ahora',
-      likes: 0,
-      liked: false,
-      replies: 0,
-      tag: 'experiencia',
+    setPosting(true)
+
+    try {
+      const res = await fetch('/api/community', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          autor: 'Tú',
+          avatar: '🌟',
+          nivel: 'Observador',
+          texto: nuevoPost.trim(),
+          tag: 'experiencia',
+        }),
+      })
+
+      if (res.ok) {
+        const newPost = await res.json()
+        setPosts([{ ...newPost, liked: false }, ...posts])
+      }
+    } catch {
+      // Silently fail
     }
-    const updated = [post, ...posts]
-    setPosts(updated)
-    savePosts(updated)
+
     setNuevoPost('')
     setShowNuevoPost(false)
+    setPosting(false)
   }
 
   if (!mounted) {
@@ -270,7 +271,7 @@ export default function ComunidadPage() {
                           <div className="flex items-center gap-2">
                             <span className="text-text-muted text-[10px]">{post.nivel}</span>
                             <span className="text-text-muted text-[10px]">·</span>
-                            <span className="text-text-muted text-[10px]">{post.timestamp}</span>
+                            <span className="text-text-muted text-[10px]">{timeAgo(post.created_at)}</span>
                           </div>
                         </div>
                         <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${tConfig.bg} ${tConfig.color}`}>
@@ -377,11 +378,15 @@ export default function ComunidadPage() {
             />
             <button
               onClick={addPost}
-              disabled={!nuevoPost.trim()}
+              disabled={!nuevoPost.trim() || posting}
               className="w-full py-3 bg-accent-blue rounded-xl text-white font-medium text-sm active:scale-95 transition-transform disabled:opacity-40"
             >
-              <Send className="w-4 h-4 inline mr-2" />
-              Publicar
+              {posting ? (
+                <Loader2 className="w-4 h-4 inline mr-2 animate-spin" />
+              ) : (
+                <Send className="w-4 h-4 inline mr-2" />
+              )}
+              {posting ? 'Publicando...' : 'Publicar'}
             </button>
           </div>
         </div>

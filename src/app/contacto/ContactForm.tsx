@@ -2,17 +2,36 @@
 
 import { useState } from 'react'
 import Card from '@/components/Card'
-import { Send } from 'lucide-react'
+import { Send, Loader2 } from 'lucide-react'
 
 export default function ContactForm() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [sent, setSent] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (form.name && form.email && form.message) {
+    if (!form.name || !form.email || !form.message) return
+
+    setLoading(true)
+    setError('')
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+
+      if (!res.ok) throw new Error()
+
       setSent(true)
       setForm({ name: '', email: '', message: '' })
+    } catch {
+      setError('Error al enviar. Inténtalo de nuevo.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -70,12 +89,18 @@ export default function ContactForm() {
             placeholder="Escribe tu mensaje..."
           />
         </div>
+        {error && <p className="text-red-400 text-sm">{error}</p>}
         <button
           type="submit"
-          className="w-full flex items-center justify-center gap-2 py-3 bg-accent-blue text-white font-medium rounded-lg hover:bg-accent-blue-hover transition-all glow-blue glow-blue-hover cursor-pointer"
+          disabled={loading}
+          className="w-full flex items-center justify-center gap-2 py-3 bg-accent-blue text-white font-medium rounded-lg hover:bg-accent-blue-hover transition-all glow-blue glow-blue-hover cursor-pointer disabled:opacity-60"
         >
-          <Send className="w-4 h-4" />
-          Enviar mensaje
+          {loading ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Send className="w-4 h-4" />
+          )}
+          {loading ? 'Enviando...' : 'Enviar mensaje'}
         </button>
       </form>
     </Card>
