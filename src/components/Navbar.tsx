@@ -15,6 +15,9 @@ const links = [
   { href: '/sonidos', label: 'Sonidos' },
   { href: '/diario', label: 'Diario' },
   { href: '/neuroscore', label: 'Score' },
+  { href: '/clientes', label: 'Clientes' },
+  { href: '/llamadas', label: 'Llamadas' },
+  { href: '/captacion', label: 'Captación' },
   { href: '/sos', label: 'SOS' },
 ]
 
