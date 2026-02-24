@@ -18,6 +18,10 @@ const links = [
   { href: '/clientes', label: 'Clientes' },
   { href: '/llamadas', label: 'Llamadas' },
   { href: '/captacion', label: 'Captación' },
+  { href: '/ia-coach', label: 'IA Coach' },
+  { href: '/mapa', label: 'Mapa' },
+  { href: '/comunidad', label: 'Comunidad' },
+  { href: '/retiro', label: 'Retiro' },
   { href: '/sos', label: 'SOS' },
 ]
 
