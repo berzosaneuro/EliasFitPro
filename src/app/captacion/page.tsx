@@ -257,8 +257,8 @@ export default function CaptacionPage() {
                 </div>
                 <h3 className="text-white font-semibold text-lg mb-1">Premium</h3>
                 <p className="text-text-muted text-xs mb-4">Acceso completo al método</p>
-                <p className="font-heading text-4xl font-bold text-white mb-1">9.99€<span className="text-text-muted text-base font-normal">/mes</span></p>
-                <p className="text-green-400 text-xs mb-5">Ahorra 40% con el plan anual</p>
+                <p className="font-heading text-4xl font-bold text-white mb-1">4,99€<span className="text-text-muted text-base font-normal">/mes</span></p>
+                <p className="text-green-400 text-xs mb-5">Acceso completo al método</p>
                 <ul className="space-y-2 mb-6">
                   {[
                     'Todo lo Free +',

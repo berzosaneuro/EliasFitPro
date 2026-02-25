@@ -5,6 +5,7 @@ import Footer from '@/components/Footer'
 import BottomTabBar from '@/components/BottomTabBar'
 import PWARegister from '@/components/PWARegister'
 import { PremiumProvider } from '@/context/PremiumContext'
+import { AdminProvider } from '@/context/AdminContext'
 
 export const metadata: Metadata = {
   title: 'Neuropresencia — Berzosa Neuro',
@@ -34,13 +35,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="apple-touch-icon" href="/icons/icon.svg" />
       </head>
       <body>
-        <PremiumProvider>
-          <PWARegister />
-          <Navbar />
-          <main className="min-h-screen pb-20 md:pb-0">{children}</main>
-          <Footer />
-          <BottomTabBar />
-        </PremiumProvider>
+        <AdminProvider>
+          <PremiumProvider>
+            <PWARegister />
+            <Navbar />
+            <main className="min-h-screen pb-20 md:pb-0">{children}</main>
+            <Footer />
+            <BottomTabBar />
+          </PremiumProvider>
+        </AdminProvider>
       </body>
     </html>
   )

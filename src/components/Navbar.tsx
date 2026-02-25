@@ -3,8 +3,9 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, Brain, Crown } from 'lucide-react'
+import { Menu, X, Brain, Crown, Shield } from 'lucide-react'
 import { usePremium } from '@/context/PremiumContext'
+import { useAdmin } from '@/context/AdminContext'
 
 const links = [
   { href: '/', label: 'Inicio' },
@@ -28,6 +29,7 @@ const links = [
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const { isPremium } = usePremium()
+  const { isAdmin } = useAdmin()
   const pathname = usePathname()
 
   return (
@@ -73,6 +75,17 @@ export default function Navbar() {
                   Empezar
                 </Link>
               )}
+              <Link
+                href={isAdmin ? '/admin' : '/admin/login'}
+                className={`ml-1 p-2 rounded-lg transition-all ${
+                  pathname.startsWith('/admin')
+                    ? 'text-accent-blue bg-accent-blue/10'
+                    : 'text-text-muted hover:text-white hover:bg-white/5'
+                }`}
+                title="Panel Admin"
+              >
+                <Shield className="w-4 h-4" />
+              </Link>
             </div>
           </div>
         </div>
@@ -116,6 +129,20 @@ export default function Navbar() {
                   </Link>
                 )
               })}
+              <div className="border-t border-white/5 mt-2 pt-2">
+                <Link
+                  href={isAdmin ? '/admin' : '/admin/login'}
+                  onClick={() => setOpen(false)}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm transition-all ${
+                    pathname.startsWith('/admin')
+                      ? 'text-accent-blue bg-accent-blue/10 font-medium'
+                      : 'text-text-secondary hover:text-white'
+                  }`}
+                >
+                  <Shield className="w-4 h-4" />
+                  Panel Admin
+                </Link>
+              </div>
             </div>
           </div>
         )}
