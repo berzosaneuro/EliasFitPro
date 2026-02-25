@@ -6,11 +6,11 @@ import { useAdmin } from '@/context/AdminContext'
 import Container from '@/components/Container'
 import {
   Users, Mail, Phone, MessageSquare, BarChart3, LogOut,
-  ChevronRight, Loader2, Trash2, UserCheck, UserX, Crown,
-  Calendar, Clock, PhoneCall, PhoneMissed, Download, RefreshCw
+  Loader2, Trash2, UserCheck, Crown, Download, RefreshCw,
+  PhoneCall, PhoneMissed, Star
 } from 'lucide-react'
 
-type Tab = 'resumen' | 'clientes' | 'leads' | 'contactos' | 'llamadas' | 'comunidad'
+type Tab = 'resumen' | 'suscriptores' | 'clientes' | 'leads' | 'contactos' | 'llamadas' | 'comunidad'
 
 type Cliente = {
   id: string; nombre: string; email: string; telefono: string
@@ -27,6 +27,32 @@ type Post = {
   id: string; autor: string; avatar: string; nivel: string
   texto: string; likes: number; replies: number; tag: string; created_at: string
 }
+type Subscriber = {
+  id: string; email: string; nombre: string; sources: string[]
+  extra_data: Record<string, unknown>; created_at: string; updated_at: string
+}
+
+function downloadCSV(data: Record<string, unknown>[], filename: string) {
+  if (data.length === 0) return
+  const headers = Object.keys(data[0])
+  const csvRows = [
+    headers.join(','),
+    ...data.map(row =>
+      headers.map(h => {
+        const val = row[h]
+        const str = typeof val === 'object' ? JSON.stringify(val) : String(val ?? '')
+        return `"${str.replace(/"/g, '""')}"`
+      }).join(',')
+    ),
+  ]
+  const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `${filename}-${new Date().toISOString().split('T')[0]}.csv`
+  a.click()
+  URL.revokeObjectURL(url)
+}
 
 export default function AdminPage() {
   const { isAdmin, adminLogout } = useAdmin()
@@ -39,22 +65,25 @@ export default function AdminPage() {
   const [contactos, setContactos] = useState<Contacto[]>([])
   const [llamadas, setLlamadas] = useState<Llamada[]>([])
   const [posts, setPosts] = useState<Post[]>([])
+  const [subscribers, setSubscribers] = useState<Subscriber[]>([])
 
   const fetchAll = useCallback(async () => {
     setLoading(true)
     try {
-      const [cRes, lRes, coRes, llRes, pRes] = await Promise.allSettled([
+      const [cRes, lRes, coRes, llRes, pRes, sRes] = await Promise.allSettled([
         fetch('/api/clients'),
         fetch('/api/leads'),
         fetch('/api/contact'),
         fetch('/api/calls'),
         fetch('/api/community'),
+        fetch('/api/subscribers'),
       ])
       if (cRes.status === 'fulfilled' && cRes.value.ok) setClientes(await cRes.value.json())
       if (lRes.status === 'fulfilled' && lRes.value.ok) setLeads(await lRes.value.json())
       if (coRes.status === 'fulfilled' && coRes.value.ok) setContactos(await coRes.value.json())
       if (llRes.status === 'fulfilled' && llRes.value.ok) setLlamadas(await llRes.value.json())
       if (pRes.status === 'fulfilled' && pRes.value.ok) setPosts(await pRes.value.json())
+      if (sRes.status === 'fulfilled' && sRes.value.ok) setSubscribers(await sRes.value.json())
     } catch (err) {
       console.error('Error loading admin data:', err)
     } finally {
@@ -79,7 +108,7 @@ export default function AdminPage() {
 
   const deleteItem = async (table: string, id: string) => {
     try {
-      await fetch(`/api/admin/delete`, {
+      await fetch('/api/admin/delete', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ table, id }),
@@ -89,13 +118,54 @@ export default function AdminPage() {
       if (table === 'contacts') setContactos((prev) => prev.filter((c) => c.id !== id))
       if (table === 'calls') setLlamadas((prev) => prev.filter((l) => l.id !== id))
       if (table === 'community_posts') setPosts((prev) => prev.filter((p) => p.id !== id))
+      if (table === 'subscribers') setSubscribers((prev) => prev.filter((s) => s.id !== id))
     } catch (err) {
       console.error('Delete error:', err)
     }
   }
 
+  // Build master email list (all unique emails from all sources)
+  const allEmails = new Map<string, { email: string; nombre: string; sources: string[]; date: string }>()
+  subscribers.forEach((s) => {
+    const key = s.email.toLowerCase()
+    if (!allEmails.has(key)) {
+      allEmails.set(key, { email: s.email, nombre: s.nombre, sources: s.sources || [], date: s.created_at })
+    }
+  })
+  leads.forEach((l) => {
+    const key = l.email.toLowerCase()
+    if (!allEmails.has(key)) {
+      allEmails.set(key, { email: l.email, nombre: l.name, sources: [l.source], date: l.created_at })
+    } else {
+      const existing = allEmails.get(key)!
+      if (!existing.sources.includes(l.source)) existing.sources.push(l.source)
+    }
+  })
+  contactos.forEach((c) => {
+    const key = c.email.toLowerCase()
+    if (!allEmails.has(key)) {
+      allEmails.set(key, { email: c.email, nombre: c.name, sources: ['contacto'], date: c.created_at })
+    } else {
+      const existing = allEmails.get(key)!
+      if (!existing.sources.includes('contacto')) existing.sources.push('contacto')
+    }
+  })
+
+  const totalEmails = allEmails.size
+
+  const exportAllEmails = () => {
+    const data = Array.from(allEmails.values()).map((e) => ({
+      email: e.email,
+      nombre: e.nombre,
+      fuentes: e.sources.join('; '),
+      fecha: new Date(e.date).toLocaleDateString('es'),
+    }))
+    downloadCSV(data, 'neuropresencia-emails')
+  }
+
   const tabs: { id: Tab; label: string; icon: typeof Users; count: number }[] = [
     { id: 'resumen', label: 'Resumen', icon: BarChart3, count: 0 },
+    { id: 'suscriptores', label: 'Emails', icon: Star, count: totalEmails },
     { id: 'clientes', label: 'Clientes', icon: Users, count: clientes.length },
     { id: 'leads', label: 'Leads', icon: Mail, count: leads.length },
     { id: 'contactos', label: 'Mensajes', icon: MessageSquare, count: contactos.length },
@@ -177,12 +247,13 @@ export default function AdminPage() {
           {/* RESUMEN */}
           {tab === 'resumen' && (
             <div className="space-y-4 animate-fade-in">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                 {[
+                  { label: 'Emails totales', value: totalEmails, icon: Star, color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
                   { label: 'Clientes', value: clientes.length, icon: Users, color: 'text-accent-blue', bg: 'bg-accent-blue/10' },
                   { label: 'Leads', value: leads.length, icon: Mail, color: 'text-green-400', bg: 'bg-green-500/10' },
                   { label: 'Mensajes', value: contactos.length, icon: MessageSquare, color: 'text-purple-400', bg: 'bg-purple-500/10' },
-                  { label: 'Llamadas', value: llamadas.length, icon: Phone, color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
+                  { label: 'Llamadas', value: llamadas.length, icon: Phone, color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
                 ].map((s) => (
                   <div key={s.label} className="glass rounded-2xl p-4">
                     <div className={`w-10 h-10 rounded-xl ${s.bg} flex items-center justify-center mb-3`}>
@@ -192,6 +263,27 @@ export default function AdminPage() {
                     <p className="text-text-muted text-xs">{s.label}</p>
                   </div>
                 ))}
+              </div>
+
+              {/* Quick export */}
+              <div className="glass rounded-2xl p-5">
+                <h3 className="text-white font-semibold text-sm mb-3 flex items-center gap-2">
+                  <Download className="w-4 h-4 text-accent-blue" /> Exportar datos
+                </h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                  <button onClick={exportAllEmails} className="py-2.5 px-3 rounded-xl bg-yellow-500/10 text-yellow-400 text-xs font-medium active:scale-95 transition-transform flex items-center justify-center gap-1.5">
+                    <Download className="w-3.5 h-3.5" /> Todos los emails
+                  </button>
+                  <button onClick={() => downloadCSV(leads.map(l => ({ email: l.email, nombre: l.name, fuente: l.source, fecha: l.created_at })), 'leads')} className="py-2.5 px-3 rounded-xl bg-green-500/10 text-green-400 text-xs font-medium active:scale-95 transition-transform flex items-center justify-center gap-1.5">
+                    <Download className="w-3.5 h-3.5" /> Leads CSV
+                  </button>
+                  <button onClick={() => downloadCSV(clientes.map(c => ({ nombre: c.nombre, email: c.email, telefono: c.telefono, estado: c.estado, plan: c.plan })), 'clientes')} className="py-2.5 px-3 rounded-xl bg-accent-blue/10 text-accent-blue text-xs font-medium active:scale-95 transition-transform flex items-center justify-center gap-1.5">
+                    <Download className="w-3.5 h-3.5" /> Clientes CSV
+                  </button>
+                  <button onClick={() => downloadCSV(contactos.map(c => ({ nombre: c.name, email: c.email, mensaje: c.message, fecha: c.created_at })), 'mensajes')} className="py-2.5 px-3 rounded-xl bg-purple-500/10 text-purple-400 text-xs font-medium active:scale-95 transition-transform flex items-center justify-center gap-1.5">
+                    <Download className="w-3.5 h-3.5" /> Mensajes CSV
+                  </button>
+                </div>
               </div>
 
               <div className="grid md:grid-cols-2 gap-3">
@@ -239,36 +331,85 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* Recent leads */}
+              {/* Email sources breakdown */}
               <div className="glass rounded-2xl p-5">
                 <h3 className="text-white font-semibold text-sm mb-3 flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-green-400" /> Últimos leads
+                  <Star className="w-4 h-4 text-yellow-400" /> Emails por fuente
                 </h3>
-                {leads.length === 0 ? (
-                  <p className="text-text-muted text-sm">Sin leads todavía</p>
-                ) : (
-                  <div className="space-y-2">
-                    {leads.slice(0, 5).map((l) => (
-                      <div key={l.id} className="flex items-center gap-3 glass-light rounded-xl p-3">
-                        <Mail className="w-4 h-4 text-green-400 shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-white text-sm truncate">{l.email}</p>
-                          <p className="text-text-muted text-[10px]">{l.name || 'Sin nombre'} · {l.source}</p>
+                <div className="space-y-2">
+                  {(() => {
+                    const sourceCounts: Record<string, number> = {}
+                    allEmails.forEach((e) => {
+                      e.sources.forEach((s) => {
+                        sourceCounts[s] = (sourceCounts[s] || 0) + 1
+                      })
+                    })
+                    return Object.entries(sourceCounts)
+                      .sort(([, a], [, b]) => b - a)
+                      .map(([source, count]) => (
+                        <div key={source} className="flex items-center gap-3">
+                          <div className="w-2 h-2 rounded-full bg-accent-blue" />
+                          <span className="text-text-secondary text-sm flex-1">{source}</span>
+                          <span className="text-white font-medium text-sm">{count}</span>
                         </div>
-                        <span className="text-text-muted text-[10px] shrink-0">
-                          {new Date(l.created_at).toLocaleDateString('es')}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                      ))
+                  })()}
+                </div>
               </div>
+            </div>
+          )}
+
+          {/* SUSCRIPTORES / TODOS LOS EMAILS */}
+          {tab === 'suscriptores' && (
+            <div className="space-y-3 animate-fade-in">
+              <div className="flex items-center justify-between">
+                <p className="text-text-secondary text-sm">{totalEmails} emails recopilados de todas las fuentes</p>
+                <button
+                  onClick={exportAllEmails}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-yellow-500/10 text-yellow-400 rounded-xl text-xs font-medium active:scale-95 transition-transform"
+                >
+                  <Download className="w-3.5 h-3.5" /> Exportar CSV
+                </button>
+              </div>
+
+              {totalEmails === 0 ? (
+                <div className="glass rounded-2xl p-8 text-center">
+                  <Star className="w-10 h-10 text-text-muted mx-auto mb-3" />
+                  <p className="text-text-secondary text-sm">No hay emails recopilados todavia</p>
+                  <p className="text-text-muted text-xs mt-1">Los emails se capturan del test, programa, neuroscore, captacion y contacto</p>
+                </div>
+              ) : (
+                Array.from(allEmails.values()).map((e) => (
+                  <div key={e.email} className="glass rounded-2xl p-4 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center shrink-0">
+                      <Star className="w-5 h-5 text-yellow-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white text-sm font-medium truncate">{e.email}</p>
+                      <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                        <span className="text-text-muted text-[10px]">{e.nombre || 'Sin nombre'}</span>
+                        {e.sources.map((s) => (
+                          <span key={s} className="text-[10px] px-1.5 py-0.5 bg-accent-blue/10 text-accent-blue rounded-full">{s}</span>
+                        ))}
+                        <span className="text-text-muted text-[10px]">{new Date(e.date).toLocaleDateString('es')}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           )}
 
           {/* CLIENTES */}
           {tab === 'clientes' && (
             <div className="space-y-2 animate-fade-in">
+              {clientes.length > 0 && (
+                <div className="flex justify-end mb-1">
+                  <button onClick={() => downloadCSV(clientes.map(c => ({ nombre: c.nombre, email: c.email, telefono: c.telefono, estado: c.estado, plan: c.plan, sesiones: c.sesionesTotales })), 'clientes')} className="flex items-center gap-1.5 px-3 py-1.5 bg-accent-blue/10 text-accent-blue rounded-lg text-[10px] font-medium active:scale-95 transition-transform">
+                    <Download className="w-3 h-3" /> CSV
+                  </button>
+                </div>
+              )}
               {clientes.length === 0 ? (
                 <div className="glass rounded-2xl p-8 text-center">
                   <Users className="w-10 h-10 text-text-muted mx-auto mb-3" />
@@ -301,14 +442,10 @@ export default function AdminPage() {
                               {c.estado}
                             </span>
                             <span className="text-text-muted text-[10px]">{c.sesionesTotales} sesiones</span>
-                            {c.fechaAlta && <span className="text-text-muted text-[10px]">Alta: {c.fechaAlta}</span>}
                           </div>
                           {c.notas && <p className="text-text-secondary text-xs mt-2">{c.notas}</p>}
                         </div>
-                        <button
-                          onClick={() => deleteItem('clients', c.id)}
-                          className="p-2 rounded-lg hover:bg-red-500/10 text-text-muted hover:text-red-400 transition-colors shrink-0"
-                        >
+                        <button onClick={() => deleteItem('clients', c.id)} className="p-2 rounded-lg hover:bg-red-500/10 text-text-muted hover:text-red-400 transition-colors shrink-0">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -322,6 +459,13 @@ export default function AdminPage() {
           {/* LEADS */}
           {tab === 'leads' && (
             <div className="space-y-2 animate-fade-in">
+              {leads.length > 0 && (
+                <div className="flex justify-end mb-1">
+                  <button onClick={() => downloadCSV(leads.map(l => ({ email: l.email, nombre: l.name, fuente: l.source, fecha: l.created_at })), 'leads')} className="flex items-center gap-1.5 px-3 py-1.5 bg-green-500/10 text-green-400 rounded-lg text-[10px] font-medium active:scale-95 transition-transform">
+                    <Download className="w-3 h-3" /> CSV
+                  </button>
+                </div>
+              )}
               {leads.length === 0 ? (
                 <div className="glass rounded-2xl p-8 text-center">
                   <Mail className="w-10 h-10 text-text-muted mx-auto mb-3" />
@@ -335,14 +479,9 @@ export default function AdminPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-white text-sm font-medium truncate">{l.email}</p>
-                      <p className="text-text-muted text-xs">
-                        {l.name || 'Sin nombre'} · Fuente: {l.source} · {new Date(l.created_at).toLocaleDateString('es')}
-                      </p>
+                      <p className="text-text-muted text-xs">{l.name || 'Sin nombre'} · {l.source} · {new Date(l.created_at).toLocaleDateString('es')}</p>
                     </div>
-                    <button
-                      onClick={() => deleteItem('leads', l.id)}
-                      className="p-2 rounded-lg hover:bg-red-500/10 text-text-muted hover:text-red-400 transition-colors shrink-0"
-                    >
+                    <button onClick={() => deleteItem('leads', l.id)} className="p-2 rounded-lg hover:bg-red-500/10 text-text-muted hover:text-red-400 transition-colors shrink-0">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
@@ -374,10 +513,7 @@ export default function AdminPage() {
                         <p className="text-accent-blue text-xs mb-1">{c.email}</p>
                         <p className="text-text-secondary text-sm leading-relaxed">{c.message}</p>
                       </div>
-                      <button
-                        onClick={() => deleteItem('contacts', c.id)}
-                        className="p-2 rounded-lg hover:bg-red-500/10 text-text-muted hover:text-red-400 transition-colors shrink-0"
-                      >
+                      <button onClick={() => deleteItem('contacts', c.id)} className="p-2 rounded-lg hover:bg-red-500/10 text-text-muted hover:text-red-400 transition-colors shrink-0">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -411,19 +547,11 @@ export default function AdminPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-white text-sm font-medium">{l.clienteNombre}</p>
-                        <p className="text-text-muted text-xs">
-                          {l.fecha} · {l.hora} · {l.motivo}
-                          {l.duracion > 0 && ` · ${l.duracion}min`}
-                        </p>
+                        <p className="text-text-muted text-xs">{l.fecha} · {l.hora} · {l.motivo}{l.duracion > 0 && ` · ${l.duracion}min`}</p>
                         {l.notas && <p className="text-text-secondary text-xs mt-1">{l.notas}</p>}
                       </div>
-                      <span className={`text-[10px] px-2 py-1 rounded-full font-medium ${cfg.bg} ${cfg.color} shrink-0`}>
-                        {l.tipo}
-                      </span>
-                      <button
-                        onClick={() => deleteItem('calls', l.id)}
-                        className="p-2 rounded-lg hover:bg-red-500/10 text-text-muted hover:text-red-400 transition-colors shrink-0"
-                      >
+                      <span className={`text-[10px] px-2 py-1 rounded-full font-medium ${cfg.bg} ${cfg.color} shrink-0`}>{l.tipo}</span>
+                      <button onClick={() => deleteItem('calls', l.id)} className="p-2 rounded-lg hover:bg-red-500/10 text-text-muted hover:text-red-400 transition-colors shrink-0">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -445,9 +573,7 @@ export default function AdminPage() {
                 posts.map((p) => (
                   <div key={p.id} className="glass rounded-2xl p-4">
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center text-lg shrink-0">
-                        {p.avatar}
-                      </div>
+                      <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center text-lg shrink-0">{p.avatar}</div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-0.5">
                           <p className="text-white text-sm font-medium">{p.autor}</p>
@@ -460,10 +586,7 @@ export default function AdminPage() {
                           <span className="text-text-muted text-[10px]">{p.replies} respuestas</span>
                         </div>
                       </div>
-                      <button
-                        onClick={() => deleteItem('community_posts', p.id)}
-                        className="p-2 rounded-lg hover:bg-red-500/10 text-text-muted hover:text-red-400 transition-colors shrink-0"
-                      >
+                      <button onClick={() => deleteItem('community_posts', p.id)} className="p-2 rounded-lg hover:bg-red-500/10 text-text-muted hover:text-red-400 transition-colors shrink-0">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Container from '@/components/Container'
 import FadeInSection from '@/components/FadeInSection'
+import EmailCapture from '@/components/EmailCapture'
 import Link from 'next/link'
 import { Lock, Check, Play, ChevronRight, ArrowLeft, Brain, Eye, Wind, Heart, Zap, Target, Shield, Flame, Sun, Moon, Sparkles, Crown } from 'lucide-react'
 
@@ -175,11 +176,19 @@ export default function ProgramaPage() {
               <p className="text-text-muted text-sm mb-8">Cada día desbloquea el siguiente. Sin atajos.</p>
               <button
                 onClick={startProgram}
-                className="w-full py-4 bg-accent-blue text-white rounded-2xl font-semibold text-lg active:scale-95 transition-transform"
+                className="w-full py-4 bg-accent-blue text-white rounded-2xl font-semibold text-lg active:scale-95 transition-transform mb-4"
                 style={{ boxShadow: '0 0 25px rgba(59,130,246,0.3)' }}
               >
                 Empezar el programa
               </button>
+
+              <EmailCapture
+                source="programa-21-dias"
+                title="Recibe recordatorios diarios"
+                subtitle="Te enviamos un recordatorio cada día para que no pierdas el ritmo."
+                buttonText="Activar"
+                compact
+              />
             </div>
           </Container>
         </section>

@@ -5,6 +5,7 @@ import Container from '@/components/Container'
 import FadeInSection from '@/components/FadeInSection'
 import { Activity, Flame, Brain, Target, TrendingUp, ChevronRight, Trophy, Zap } from 'lucide-react'
 import Link from 'next/link'
+import EmailCapture from '@/components/EmailCapture'
 
 const STORAGE_KEY = 'neuroscore_data'
 
@@ -260,6 +261,21 @@ export default function NeuroScorePage() {
                 )
               })}
             </div>
+          </FadeInSection>
+        </Container>
+      </section>
+
+      {/* Email capture for progress sync */}
+      <section className="pb-12">
+        <Container>
+          <FadeInSection>
+            <EmailCapture
+              source="neuroscore"
+              title="Sincroniza tu progreso"
+              subtitle="Recibe un resumen semanal de tu NeuroScore y racha."
+              buttonText="Activar"
+              extraData={{ todayScore, streak, perfectDays: data.logs.filter(l => calculateScore(l) === 100).length }}
+            />
           </FadeInSection>
         </Container>
       </section>

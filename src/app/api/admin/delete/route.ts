@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getSupabase } from '@/lib/supabase'
 
-const ALLOWED_TABLES = ['clients', 'leads', 'contacts', 'calls', 'community_posts']
+const ALLOWED_TABLES = ['clients', 'leads', 'contacts', 'calls', 'community_posts', 'subscribers']
 
 export async function DELETE(request: Request) {
   const body = await request.json()

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Card from '@/components/Card'
 import Button from '@/components/Button'
+import EmailCapture from '@/components/EmailCapture'
 
 const questions = [
   '¿Con qué frecuencia te descubres pensando en el pasado sin motivo?',
@@ -82,7 +83,7 @@ export default function TestQuiz() {
             <h3 className="text-accent-blue font-semibold text-sm uppercase tracking-wider mb-2">Recomendación</h3>
             <p className="text-text-secondary text-sm">{result.recommendation}</p>
           </div>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
             <Button href="/metodo">Ver Método N.E.U.R.O.</Button>
             <Button
               variant="secondary"
@@ -94,6 +95,14 @@ export default function TestQuiz() {
               Repetir test
             </Button>
           </div>
+
+          <EmailCapture
+            source="test-ruido-mental"
+            title="Guarda tu resultado"
+            subtitle="Recibe tu análisis por email y haz seguimiento de tu progreso."
+            buttonText="Enviar"
+            extraData={{ score, level: result.level, answers }}
+          />
         </Card>
       </div>
     )

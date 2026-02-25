@@ -67,6 +67,20 @@ create table if not exists calls (
   created_at timestamptz default now()
 );
 
+-- 6. Tabla de suscriptores (emails de todas las fuentes)
+create table if not exists subscribers (
+  id uuid default gen_random_uuid() primary key,
+  email text not null,
+  nombre text default '',
+  sources text[] default '{}',
+  extra_data jsonb default '{}',
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+-- Índice único por email para evitar duplicados
+create unique index if not exists subscribers_email_unique on subscribers (lower(email));
+
 -- ===========================================
 -- Políticas de seguridad (RLS)
 -- Permitir lectura/escritura pública (sin auth)
@@ -96,6 +110,10 @@ create policy "Full access clients" on clients for all using (true);
 
 -- Calls: acceso completo
 create policy "Full access calls" on calls for all using (true);
+
+-- Subscribers: acceso completo
+alter table subscribers enable row level security;
+create policy "Full access subscribers" on subscribers for all using (true);
 
 -- ===========================================
 -- Datos demo para comunidad
