@@ -5,8 +5,8 @@ import FadeInSection from '@/components/FadeInSection'
 import { Brain } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Sobre — Neuropresencia',
-  description: 'Soy Berzosa Neuro. Neuropresencia nace para enseñar lo que casi nadie explica.',
+  title: 'Sobre — NeuroConciencia',
+  description: 'Soy Berzosa Neuro. NeuroConciencia nace para enseñar lo que casi nadie explica.',
 }
 
 export default function SobrePage() {
@@ -34,7 +34,7 @@ export default function SobrePage() {
                   Soy Berzosa Neuro.
                 </p>
                 <p>
-                  Neuropresencia nace para enseñar lo que casi nadie explica: el ruido mental es un patrón aprendido y la conciencia se puede entrenar.
+                  NeuroConciencia nace para enseñar lo que casi nadie explica: el ruido mental es un patrón aprendido y la conciencia se puede entrenar.
                 </p>
                 <p>
                   No necesitas escapar de tu vida. Necesitas dejar de vivir secuestrado por tu mente.

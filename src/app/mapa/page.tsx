@@ -8,7 +8,7 @@ import {
   ChevronRight, Star, Flame, Target, Layers
 } from 'lucide-react'
 
-const STORAGE_KEY = 'neuropresencia_mapa'
+const STORAGE_KEY = 'neuroconciencia_mapa'
 
 type DimensionKey = 'presencia' | 'calma' | 'claridad' | 'energia' | 'conexion'
 

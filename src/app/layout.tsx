@@ -8,13 +8,13 @@ import { PremiumProvider } from '@/context/PremiumContext'
 import { AdminProvider } from '@/context/AdminContext'
 
 export const metadata: Metadata = {
-  title: 'Neuropresencia — Berzosa Neuro',
+  title: 'NeuroConciencia — Berzosa Neuro',
   description: 'Supraconciencia, metacognición y neuroplasticidad para apagar el ruido mental y vivir desde el presente.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Neuropresencia',
+    title: 'NeuroConciencia',
   },
 }
 

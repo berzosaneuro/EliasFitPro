@@ -109,7 +109,7 @@ export default function CaptacionPage() {
         <Container>
           <FadeInSection>
             <h2 className="font-heading text-2xl md:text-3xl font-bold text-white text-center mb-2">
-              ¿Por qué Neuropresencia es diferente?
+              ¿Por qué NeuroConciencia es diferente?
             </h2>
             <p className="text-text-secondary text-center mb-8 max-w-lg mx-auto">
               Inspirado en los métodos del Dr. Manuel Sanz y líderes en supraconsciencia.

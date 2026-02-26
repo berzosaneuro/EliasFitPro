@@ -160,7 +160,7 @@ export default function AdminPage() {
       fuentes: e.sources.join('; '),
       fecha: new Date(e.date).toLocaleDateString('es'),
     }))
-    downloadCSV(data, 'neuropresencia-emails')
+    downloadCSV(data, 'neuroconciencia-emails')
   }
 
   const tabs: { id: Tab; label: string; icon: typeof Users; count: number }[] = [

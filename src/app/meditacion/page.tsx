@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { Volume2, ChevronRight } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Sala de Meditación — Neuropresencia',
+  title: 'Sala de Meditación — NeuroConciencia',
   description: 'Apaga el ruido mental. Vuelve al presente. Meditaciones guiadas por tema y duración.',
 }
 

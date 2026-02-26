@@ -6,7 +6,7 @@ import FadeInSection from '@/components/FadeInSection'
 import { ShieldOff, Target, User, Heart, Eye, Clock } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Método N.E.U.R.O. — Neuropresencia',
+  title: 'Método N.E.U.R.O. — NeuroConciencia',
   description: 'La presencia no se encuentra. Se entrena. Un framework práctico para entrenar conciencia y cortar el ruido mental.',
 }
 
@@ -106,7 +106,7 @@ export default function MetodoPage() {
             <div className="max-w-2xl mx-auto">
               <div className="text-center mb-10">
                 <Clock className="w-8 h-8 text-accent-blue mx-auto mb-4" />
-                <SectionTitle title="Rutina Neuropresencia (10 minutos)" />
+                <SectionTitle title="Rutina NeuroConciencia (10 minutos)" />
               </div>
               <div className="space-y-3">
                 {routine.map((r, i) => (

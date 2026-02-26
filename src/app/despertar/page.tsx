@@ -5,7 +5,7 @@ import ClarityExercise from './ClarityExercise'
 import { Sparkles, Heart, Eye, Sun, Flame, ArrowDown } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Despertar en Vida — Neuropresencia',
+  title: 'Despertar en Vida — NeuroConciencia',
   description: 'No hace falta morir para despertar. La claridad que otros buscan en experiencias extremas, tú la entrenas aquí.',
 }
 
@@ -60,7 +60,7 @@ export default function DespertarPage() {
           <div className="max-w-2xl md:mx-auto md:text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-500/10 border border-violet-500/20 mb-5 animate-fade-in">
               <Sparkles className="w-3.5 h-3.5 text-violet-400" />
-              <span className="text-violet-400 text-xs font-semibold uppercase tracking-wider">Exclusivo Neuropresencia</span>
+              <span className="text-violet-400 text-xs font-semibold uppercase tracking-wider">Exclusivo NeuroConciencia</span>
             </div>
             <h1 className="font-heading text-4xl md:text-6xl font-bold tracking-tight text-white mb-4 animate-fade-in leading-[1.1]">
               No hace falta morir<br />
@@ -116,7 +116,7 @@ export default function DespertarPage() {
                       <p className="text-text-muted text-xs font-medium uppercase tracking-wide">Experiencia cercana a la muerte</p>
                       <p className="text-text-secondary text-sm italic">&ldquo;{r.ecm}&rdquo;</p>
                       <div className="w-8 h-px bg-white/10" />
-                      <p className="text-text-muted text-xs font-medium uppercase tracking-wide">Neuropresencia</p>
+                      <p className="text-text-muted text-xs font-medium uppercase tracking-wide">NeuroConciencia</p>
                       <p className="text-white text-sm font-medium">{r.neuro}</p>
                     </div>
                   </div>

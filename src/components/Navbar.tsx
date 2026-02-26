@@ -42,7 +42,7 @@ export default function Navbar() {
               <div className="w-8 h-8 rounded-xl bg-accent-blue/10 flex items-center justify-center group-hover:bg-accent-blue/20 transition-colors">
                 <Brain className="w-4.5 h-4.5 text-accent-blue" />
               </div>
-              <span className="font-heading font-bold text-lg text-white">Neuropresencia</span>
+              <span className="font-heading font-bold text-lg text-white">NeuroConciencia</span>
             </Link>
 
             <div className="flex items-center gap-1">
@@ -98,7 +98,7 @@ export default function Navbar() {
             <div className="w-8 h-8 rounded-xl bg-accent-blue/10 flex items-center justify-center">
               <Brain className="w-4 h-4 text-accent-blue" />
             </div>
-            <span className="font-heading font-semibold text-white">Neuropresencia</span>
+            <span className="font-heading font-semibold text-white">NeuroConciencia</span>
           </Link>
           <button
             onClick={() => setOpen(!open)}

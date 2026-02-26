@@ -16,9 +16,9 @@ export function generateStaticParams() {
 
 export function generateMetadata({ params }: Props): Metadata {
   const post = getPostBySlug(params.slug)
-  if (!post) return { title: 'No encontrado — Neuropresencia' }
+  if (!post) return { title: 'No encontrado — NeuroConciencia' }
   return {
-    title: `${post.title} — Neuropresencia`,
+    title: `${post.title} — NeuroConciencia`,
     description: post.summary,
   }
 }

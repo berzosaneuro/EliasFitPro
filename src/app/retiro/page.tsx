@@ -8,7 +8,7 @@ import {
   Play, Pause, Check, ChevronRight, Volume2, Bell, X, Flame, Zap
 } from 'lucide-react'
 
-const STORAGE_KEY = 'neuropresencia_retiro'
+const STORAGE_KEY = 'neuroconciencia_retiro'
 
 type RetiroState = {
   activo: boolean

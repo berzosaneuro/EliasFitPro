@@ -34,7 +34,7 @@ export default function PlanesPage() {
             Invierte en tu <span className="text-accent-blue">mente</span>
           </h1>
           <p className="text-text-secondary max-w-xl mx-auto text-lg">
-            Empieza gratis y desbloquea todo el potencial de Neuropresencia cuando estés listo.
+            Empieza gratis y desbloquea todo el potencial de NeuroConciencia cuando estés listo.
           </p>
         </div>
 

@@ -22,18 +22,18 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
   const [plan, setPlan] = useState<Plan>('free')
 
   useEffect(() => {
-    const saved = localStorage.getItem('neuropresencia-plan')
+    const saved = localStorage.getItem('neuroconciencia-plan')
     if (saved === 'premium') setPlan('premium')
   }, [])
 
   const upgradeToPremium = () => {
     setPlan('premium')
-    localStorage.setItem('neuropresencia-plan', 'premium')
+    localStorage.setItem('neuroconciencia-plan', 'premium')
   }
 
   const downgradeToFree = () => {
     setPlan('free')
-    localStorage.setItem('neuropresencia-plan', 'free')
+    localStorage.setItem('neuroconciencia-plan', 'free')
   }
 
   return (

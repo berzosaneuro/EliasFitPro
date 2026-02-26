@@ -39,7 +39,7 @@ const PLANTILLAS: Plantilla[] = [
   },
   {
     id: '3', nombre: 'Bienvenida nuevo cliente', tipo: 'bienvenida',
-    mensaje: 'Hola {nombre}, bienvenido/a a Neuropresencia. Soy tu guía en este camino de consciencia. ¿Cuándo te vendría bien nuestra primera sesión?'
+    mensaje: 'Hola {nombre}, bienvenido/a a NeuroConciencia. Soy tu guía en este camino de consciencia. ¿Cuándo te vendría bien nuestra primera sesión?'
   },
   {
     id: '4', nombre: 'Reactivación', tipo: 'reactivacion',

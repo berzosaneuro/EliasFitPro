@@ -4,8 +4,8 @@ import FadeInSection from '@/components/FadeInSection'
 import ContactForm from './ContactForm'
 
 export const metadata: Metadata = {
-  title: 'Contacto — Neuropresencia',
-  description: 'Ponte en contacto con Neuropresencia. Escríbenos tu mensaje.',
+  title: 'Contacto — NeuroConciencia',
+  description: 'Ponte en contacto con NeuroConciencia. Escríbenos tu mensaje.',
 }
 
 export default function ContactoPage() {

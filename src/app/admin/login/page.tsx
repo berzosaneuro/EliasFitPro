@@ -44,7 +44,7 @@ export default function AdminLoginPage() {
             Panel Admin
           </h1>
           <p className="text-text-secondary text-sm">
-            Neuropresencia — Berzosa Neuro
+            NeuroConciencia — Berzosa Neuro
           </p>
         </div>
 

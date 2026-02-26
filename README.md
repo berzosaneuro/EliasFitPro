@@ -1,4 +1,4 @@
-# Neuropresencia
+# NeuroConciencia
 
 Supraconciencia, metacognición y neuroplasticidad para apagar el ruido mental y vivir desde el presente.
 

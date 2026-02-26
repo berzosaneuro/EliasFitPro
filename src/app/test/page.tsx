@@ -3,7 +3,7 @@ import Container from '@/components/Container'
 import TestQuiz from './TestQuiz'
 
 export const metadata: Metadata = {
-  title: 'Test de Ruido Mental — Neuropresencia',
+  title: 'Test de Ruido Mental — NeuroConciencia',
   description: 'Descubre en qué nivel está tu mente y qué necesitas entrenar. Test de 10 preguntas.',
 }
 

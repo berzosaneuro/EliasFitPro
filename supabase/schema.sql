@@ -1,5 +1,5 @@
 -- ===========================================
--- NEUROPRESENCIA - Esquema de Base de Datos
+-- NEUROCONCIENCIA - Esquema de Base de Datos
 -- Ejecuta este SQL en Supabase SQL Editor
 -- Dashboard > SQL Editor > New Query > Pegar y ejecutar
 -- ===========================================

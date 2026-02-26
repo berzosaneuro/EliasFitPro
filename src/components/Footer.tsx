@@ -8,7 +8,7 @@ export default function Footer() {
           <div className="flex items-center gap-2">
             <Brain className="w-4 h-4 text-accent-blue" />
             <span className="text-text-muted text-sm">
-              Neuropresencia · Berzosa Neuro
+              NeuroConciencia · Berzosa Neuro
             </span>
           </div>
           <div className="flex items-center gap-6">
@@ -21,7 +21,7 @@ export default function Footer() {
               Instagram
             </a>
             <a
-              href="mailto:contacto@neuropresencia.com"
+              href="mailto:contacto@neuroconciencia.com"
               className="text-sm text-text-muted hover:text-white transition-colors"
             >
               Email

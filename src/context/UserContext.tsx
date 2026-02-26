@@ -27,7 +27,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem('neuropresencia_user')
+      const stored = localStorage.getItem('neuroconciencia_user')
       if (stored) {
         setUserState(JSON.parse(stored))
       }
@@ -37,12 +37,12 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   const setUser = (profile: UserProfile) => {
     setUserState(profile)
-    localStorage.setItem('neuropresencia_user', JSON.stringify(profile))
+    localStorage.setItem('neuroconciencia_user', JSON.stringify(profile))
   }
 
   const logout = () => {
     setUserState(null)
-    localStorage.removeItem('neuropresencia_user')
+    localStorage.removeItem('neuroconciencia_user')
   }
 
   return (

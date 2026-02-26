@@ -14,7 +14,7 @@ const AdminContext = createContext<AdminContextType>({
   adminLogout: () => {},
 })
 
-const ADMIN_KEY = 'neuropresencia-admin'
+const ADMIN_KEY = 'neuroconciencia-admin'
 const ADMIN_PASSWORD = 'berzosa2024'
 
 export function AdminProvider({ children }: { children: ReactNode }) {
