@@ -9,21 +9,59 @@ import { useAdmin } from '@/context/AdminContext'
 
 const links = [
   { href: '/', label: 'Inicio' },
-  { href: '/despertar', label: 'Despertar' },
-  { href: '/programa', label: '21 Días' },
   { href: '/meditacion', label: 'Meditar' },
-  { href: '/ejercicios', label: 'Ejercicios' },
-  { href: '/sonidos', label: 'Sonidos' },
-  { href: '/diario', label: 'Diario' },
-  { href: '/neuroscore', label: 'Score' },
+  { href: '/programa', label: '21 Días' },
+  { href: '/retos', label: 'Retos' },
+  { href: '/masterclass', label: 'Masterclass' },
+  { href: '/podcast', label: 'Podcast' },
+  { href: '/ia-coach', label: 'IA Coach' },
+  { href: '/comunidad', label: 'Comunidad' },
+  { href: '/circulos', label: 'Círculos' },
+  { href: '/leaderboard', label: 'Ranking' },
   { href: '/clientes', label: 'Clientes' },
   { href: '/llamadas', label: 'Llamadas' },
-  { href: '/captacion', label: 'Captación' },
-  { href: '/ia-coach', label: 'IA Coach' },
-  { href: '/mapa', label: 'Mapa' },
-  { href: '/comunidad', label: 'Comunidad' },
-  { href: '/retiro', label: 'Retiro' },
-  { href: '/sos', label: 'SOS' },
+]
+
+const mobileLinks = [
+  { category: 'Practicar', items: [
+    { href: '/', label: 'Inicio' },
+    { href: '/meditacion', label: 'Meditar' },
+    { href: '/sonidos', label: 'Sonidos' },
+    { href: '/ejercicios', label: 'Ejercicios' },
+    { href: '/sos', label: 'SOS' },
+    { href: '/programa', label: '21 Días' },
+    { href: '/retos', label: 'Retos' },
+  ]},
+  { category: 'Aprender', items: [
+    { href: '/masterclass', label: 'Masterclass' },
+    { href: '/podcast', label: 'NeuroPodcast' },
+    { href: '/biblioteca', label: 'Biblioteca' },
+    { href: '/despertar', label: 'Despertar' },
+    { href: '/ia-coach', label: 'IA Coach' },
+  ]},
+  { category: 'Comunidad', items: [
+    { href: '/comunidad', label: 'Foro' },
+    { href: '/circulos', label: 'Círculos' },
+    { href: '/leaderboard', label: 'Ranking' },
+    { href: '/historias', label: 'Historias' },
+    { href: '/referidos', label: 'Referidos' },
+  ]},
+  { category: 'Herramientas', items: [
+    { href: '/diario', label: 'Diario' },
+    { href: '/neuroscore', label: 'NeuroScore' },
+    { href: '/mapa', label: 'Mapa' },
+    { href: '/notificaciones', label: 'Notificaciones' },
+  ]},
+  { category: 'Pro', items: [
+    { href: '/clientes', label: 'Clientes' },
+    { href: '/llamadas', label: 'Llamadas' },
+    { href: '/captacion', label: 'Captación' },
+    { href: '/corporativo', label: 'Empresas' },
+    { href: '/certificacion', label: 'Certificación' },
+    { href: '/marketplace', label: 'Marketplace' },
+    { href: '/kids', label: 'Kids' },
+    { href: '/retiro', label: 'Retiro' },
+  ]},
 ]
 
 export default function Navbar() {
@@ -110,26 +148,33 @@ export default function Navbar() {
 
         {/* Mobile dropdown */}
         {open && (
-          <div className="absolute top-full left-0 right-0 glass p-4 animate-slide-up">
-            <div className="space-y-1">
-              {links.map((link) => {
-                const isActive = pathname === link.href
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setOpen(false)}
-                    className={`block px-4 py-2.5 rounded-xl text-sm transition-all ${
-                      isActive
-                        ? 'text-white bg-accent-blue/10 font-medium'
-                        : 'text-text-secondary hover:text-white'
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                )
-              })}
-              <div className="border-t border-white/5 mt-2 pt-2">
+          <div className="absolute top-full left-0 right-0 glass p-4 animate-slide-up max-h-[80vh] overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+            <div className="space-y-4">
+              {mobileLinks.map((group) => (
+                <div key={group.category}>
+                  <p className="text-text-muted text-[10px] uppercase tracking-wider font-semibold px-4 mb-1">{group.category}</p>
+                  <div className="space-y-0.5">
+                    {group.items.map((link) => {
+                      const isActive = pathname === link.href
+                      return (
+                        <Link
+                          key={link.href}
+                          href={link.href}
+                          onClick={() => setOpen(false)}
+                          className={`block px-4 py-2 rounded-xl text-sm transition-all ${
+                            isActive
+                              ? 'text-white bg-accent-blue/10 font-medium'
+                              : 'text-text-secondary hover:text-white'
+                          }`}
+                        >
+                          {link.label}
+                        </Link>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
+              <div className="border-t border-white/5 pt-2">
                 <Link
                   href={isAdmin ? '/admin' : '/admin/login'}
                   onClick={() => setOpen(false)}

@@ -147,7 +147,7 @@ export default function DiarioPage() {
                   onChange={(e) => { setPresenceLevel(parseInt(e.target.value)); setSaved(false) }}
                   className="w-full h-2 rounded-full appearance-none cursor-pointer"
                   style={{
-                    background: `linear-gradient(to right, #3B82F6 ${presenceLevel}%, rgba(255,255,255,0.06) ${presenceLevel}%)`,
+                    background: `linear-gradient(to right, #7C3AED ${presenceLevel}%, rgba(255,255,255,0.06) ${presenceLevel}%)`,
                   }}
                 />
                 <div className="flex justify-between text-text-muted text-[10px] mt-1">

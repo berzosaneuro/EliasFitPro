@@ -177,7 +177,7 @@ export default function ProgramaPage() {
               <button
                 onClick={startProgram}
                 className="w-full py-4 bg-accent-blue text-white rounded-2xl font-semibold text-lg active:scale-95 transition-transform mb-4"
-                style={{ boxShadow: '0 0 25px rgba(59,130,246,0.3)' }}
+                style={{ boxShadow: '0 0 25px rgba(124,58,237,0.3)' }}
               >
                 Empezar el programa
               </button>

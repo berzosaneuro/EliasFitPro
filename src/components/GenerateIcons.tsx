@@ -14,7 +14,7 @@ export default function GenerateIcons() {
     if (!ctx) return
 
     // Background
-    ctx.fillStyle = '#0a0a0f'
+    ctx.fillStyle = '#080B16'
     ctx.beginPath()
     ctx.roundRect(0, 0, size, size, size * 0.2)
     ctx.fill()
@@ -25,13 +25,13 @@ export default function GenerateIcons() {
     const r = size * 0.22
     ctx.beginPath()
     ctx.arc(cx, cy, r, 0, Math.PI * 2)
-    ctx.fillStyle = '#3B82F6'
+    ctx.fillStyle = '#7C3AED'
     ctx.globalAlpha = 0.2
     ctx.fill()
     ctx.globalAlpha = 1
 
     // Brain outline
-    ctx.strokeStyle = '#3B82F6'
+    ctx.strokeStyle = '#7C3AED'
     ctx.lineWidth = size * 0.02
     ctx.beginPath()
     ctx.arc(cx, cy, r, 0, Math.PI * 2)

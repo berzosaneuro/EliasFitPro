@@ -155,7 +155,7 @@ export default function SOSPage() {
             style={{
               transform: `scale(${scaleValue})`,
               transition: `transform ${phase === 'inhale' ? PATTERN.inhale.duration : phase === 'exhale' ? PATTERN.exhale.duration : 0.5}s ease-in-out`,
-              boxShadow: `0 0 60px rgba(59,130,246,0.2)`,
+              boxShadow: `0 0 60px rgba(124,58,237,0.2)`,
             }}
           >
             <div className="text-center">

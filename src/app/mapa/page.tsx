@@ -22,7 +22,7 @@ type DayEntry = {
 const DIMENSIONS: { key: DimensionKey; label: string; icon: React.ElementType; color: string; desc: string }[] = [
   { key: 'presencia', label: 'Presencia', icon: Eye, color: '#8B5CF6', desc: 'Capacidad de estar en el ahora' },
   { key: 'calma', label: 'Calma interior', icon: Moon, color: '#06B6D4', desc: 'Nivel de paz mental' },
-  { key: 'claridad', label: 'Claridad mental', icon: Zap, color: '#3B82F6', desc: 'Nitidez de pensamiento' },
+  { key: 'claridad', label: 'Claridad mental', icon: Zap, color: '#7C3AED', desc: 'Nitidez de pensamiento' },
   { key: 'energia', label: 'Energía vital', icon: Flame, color: '#F59E0B', desc: 'Vitalidad y motivación' },
   { key: 'conexion', label: 'Conexión', icon: Heart, color: '#EF4444', desc: 'Empatía y relaciones' },
 ]

@@ -5,7 +5,7 @@ import Container from '@/components/Container'
 import Card from '@/components/Card'
 import FadeInSection from '@/components/FadeInSection'
 import { usePremium } from '@/context/PremiumContext'
-import { Brain, Headphones, BookOpen, ClipboardCheck, Crosshair, Timer, Moon, Zap, ChevronRight, Crown, Sparkles, Activity, AlertCircle, Flame, Calendar, Dumbbell, PenLine, Volume2 } from 'lucide-react'
+import { Brain, Headphones, BookOpen, ClipboardCheck, Crosshair, Timer, Moon, Zap, ChevronRight, Crown, Sparkles, Activity, AlertCircle, Flame, Calendar, Dumbbell, PenLine, Volume2, Trophy, Podcast, GraduationCap, Users, Video, Gift } from 'lucide-react'
 
 const quickActions = [
   { href: '/meditacion', label: 'Meditar', icon: Headphones, color: 'bg-blue-500/15 text-blue-400' },
@@ -270,6 +270,57 @@ export default function Home() {
         </Container>
       </section>
 
+      {/* New features grid */}
+      <section className="relative pb-6">
+        <Container>
+          <FadeInSection>
+            <h2 className="font-heading font-semibold text-white text-lg mb-4">Explora</h2>
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { href: '/retos', label: 'Retos', icon: Trophy, color: 'bg-amber-500/15 text-amber-400' },
+                { href: '/masterclass', label: 'Masterclass', icon: Video, color: 'bg-violet-500/15 text-violet-400' },
+                { href: '/podcast', label: 'Podcast', icon: Podcast, color: 'bg-rose-500/15 text-rose-400' },
+                { href: '/circulos', label: 'Círculos', icon: Users, color: 'bg-teal-500/15 text-teal-400' },
+                { href: '/leaderboard', label: 'Ranking', icon: Trophy, color: 'bg-emerald-500/15 text-emerald-400' },
+                { href: '/referidos', label: 'Referidos', icon: Gift, color: 'bg-pink-500/15 text-pink-400' },
+              ].map((item) => (
+                <Link key={item.href} href={item.href} className="block">
+                  <div className="glass rounded-2xl p-3 text-center active:scale-95 transition-transform">
+                    <div className={`w-10 h-10 rounded-xl ${item.color} flex items-center justify-center mx-auto mb-2`}>
+                      <item.icon className="w-5 h-5" />
+                    </div>
+                    <span className="text-text-secondary text-xs font-medium">{item.label}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </FadeInSection>
+        </Container>
+      </section>
+
+      {/* Historias de transformación CTA */}
+      <section className="relative pb-6">
+        <Container>
+          <FadeInSection>
+            <Link href="/historias" className="block">
+              <div className="glass rounded-3xl p-5 relative overflow-hidden active:scale-[0.98] transition-transform">
+                <div className="absolute -top-8 -right-8 w-32 h-32 bg-emerald-500/10 rounded-full" />
+                <div className="relative flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 flex items-center justify-center shrink-0">
+                    <Sparkles className="w-6 h-6 text-emerald-400" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-heading font-semibold text-white text-base mb-0.5">Historias de transformación</h3>
+                    <p className="text-text-secondary text-xs">Personas reales con NeuroScore verificado</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-text-muted shrink-0" />
+                </div>
+              </div>
+            </Link>
+          </FadeInSection>
+        </Container>
+      </section>
+
       {/* PRO banner */}
       {!isPremium && (
         <section className="relative pb-8">
@@ -277,7 +328,7 @@ export default function Home() {
             <FadeInSection>
               <Link href="/planes" className="block">
                 <div className="rounded-3xl p-5 relative overflow-hidden active:scale-[0.98] transition-transform"
-                  style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.15), rgba(139,92,246,0.15))' }}>
+                  style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.15), rgba(139,92,246,0.15))' }}>
                   <div className="absolute inset-0 border border-white/5 rounded-3xl" />
                   <div className="relative flex items-center gap-4">
                     <div className="w-12 h-12 rounded-2xl bg-yellow-500/15 flex items-center justify-center shrink-0">

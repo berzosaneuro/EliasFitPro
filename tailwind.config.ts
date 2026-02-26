@@ -10,21 +10,25 @@ const config: Config = {
     extend: {
       colors: {
         dark: {
-          primary: '#05070A',
-          surface: '#0D1117',
-          'surface-2': '#131920',
-          border: '#1C2432',
+          primary: '#080B16',
+          surface: '#0F1423',
+          'surface-2': '#151B2E',
+          border: '#1E2742',
         },
         accent: {
-          blue: '#3B82F6',
-          'blue-hover': '#60A5FA',
+          blue: '#7C3AED',
+          'blue-hover': '#A78BFA',
           purple: '#8B5CF6',
           cyan: '#06B6D4',
+          teal: '#14B8A6',
+          amber: '#F59E0B',
+          emerald: '#10B981',
+          rose: '#F43F5E',
         },
         text: {
           primary: '#F1F5F9',
-          secondary: '#64748B',
-          muted: '#475569',
+          secondary: '#94A3B8',
+          muted: '#64748B',
         },
       },
       fontFamily: {
@@ -61,8 +65,8 @@ const config: Config = {
           '100%': { opacity: '1', transform: 'scale(1)' },
         },
         glowPulse: {
-          '0%, 100%': { boxShadow: '0 0 5px rgba(59, 130, 246, 0.3)' },
-          '50%': { boxShadow: '0 0 20px rgba(59, 130, 246, 0.6)' },
+          '0%, 100%': { boxShadow: '0 0 5px rgba(124, 58, 237, 0.3)' },
+          '50%': { boxShadow: '0 0 20px rgba(124, 58, 237, 0.6)' },
         },
       },
     },

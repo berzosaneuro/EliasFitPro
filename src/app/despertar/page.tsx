@@ -132,7 +132,7 @@ export default function DespertarPage() {
         <Container>
           <FadeInSection>
             <div className="rounded-3xl p-6 md:p-10 relative overflow-hidden text-center"
-              style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.12), rgba(244,63,94,0.08), rgba(59,130,246,0.08))' }}>
+              style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.12), rgba(244,63,94,0.08), rgba(124,58,237,0.08))' }}>
               <div className="absolute inset-0 border border-white/5 rounded-3xl" />
               <div className="relative max-w-xl mx-auto">
                 <Flame className="w-8 h-8 text-orange-400 mx-auto mb-4" />

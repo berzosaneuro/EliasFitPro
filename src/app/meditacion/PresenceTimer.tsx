@@ -73,13 +73,13 @@ export default function PresenceTimer() {
           <circle
             cx="128" cy="128" r="120"
             fill="none"
-            stroke="#3B82F6"
+            stroke="#7C3AED"
             strokeWidth="6"
             strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
             className="transition-all duration-1000 ease-linear"
-            style={{ filter: 'drop-shadow(0 0 8px rgba(59,130,246,0.4))' }}
+            style={{ filter: 'drop-shadow(0 0 8px rgba(124,58,237,0.4))' }}
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -107,7 +107,7 @@ export default function PresenceTimer() {
               ? 'bg-white/10 text-white'
               : 'bg-accent-blue text-white'
           }`}
-          style={!running ? { boxShadow: '0 0 20px rgba(59,130,246,0.4)' } : undefined}
+          style={!running ? { boxShadow: '0 0 20px rgba(124,58,237,0.4)' } : undefined}
         >
           {running ? (
             <Pause className="w-6 h-6" />
