@@ -67,7 +67,71 @@ create table if not exists calls (
   created_at timestamptz default now()
 );
 
--- 6. Tabla de suscriptores (emails de todas las fuentes)
+-- 6. Tabla de entradas del diario
+create table if not exists diary_entries (
+  id uuid default gen_random_uuid() primary key,
+  user_email text not null,
+  date text not null,
+  presence_level integer default 50,
+  mood text default '',
+  insight text default '',
+  created_at timestamptz default now()
+);
+create unique index if not exists diary_email_date on diary_entries (user_email, date);
+
+-- 7. Tabla del mapa de consciencia
+create table if not exists mapa_entries (
+  id uuid default gen_random_uuid() primary key,
+  user_email text not null,
+  date text not null,
+  presencia numeric default 5,
+  calma numeric default 5,
+  claridad numeric default 5,
+  energia numeric default 5,
+  conexion numeric default 5,
+  nivel numeric default 5,
+  nota text default '',
+  created_at timestamptz default now()
+);
+create unique index if not exists mapa_email_date on mapa_entries (user_email, date);
+
+-- 8. Tabla de neuroscore
+create table if not exists neuroscore_entries (
+  id uuid default gen_random_uuid() primary key,
+  user_email text not null,
+  date text not null,
+  meditated boolean default false,
+  exercise_done boolean default false,
+  test_done boolean default false,
+  despertar_done boolean default false,
+  journal_done boolean default false,
+  score integer default 0,
+  created_at timestamptz default now()
+);
+create unique index if not exists neuroscore_email_date on neuroscore_entries (user_email, date);
+
+-- 9. Tabla de progreso del programa 21 días
+create table if not exists programa_progress (
+  id uuid default gen_random_uuid() primary key,
+  user_email text not null,
+  start_date text default '',
+  completed_days integer[] default '{}',
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+create unique index if not exists programa_email on programa_progress (user_email);
+
+-- 10. Tabla de resultados del test
+create table if not exists test_results (
+  id uuid default gen_random_uuid() primary key,
+  user_email text default '',
+  score integer not null,
+  level text not null,
+  answers integer[] default '{}',
+  created_at timestamptz default now()
+);
+
+-- 11. Tabla de suscriptores (emails de todas las fuentes)
 create table if not exists subscribers (
   id uuid default gen_random_uuid() primary key,
   email text not null,
@@ -114,6 +178,26 @@ create policy "Full access calls" on calls for all using (true);
 -- Subscribers: acceso completo
 alter table subscribers enable row level security;
 create policy "Full access subscribers" on subscribers for all using (true);
+
+-- Diary entries: acceso completo
+alter table diary_entries enable row level security;
+create policy "Full access diary" on diary_entries for all using (true);
+
+-- Mapa entries: acceso completo
+alter table mapa_entries enable row level security;
+create policy "Full access mapa" on mapa_entries for all using (true);
+
+-- Neuroscore entries: acceso completo
+alter table neuroscore_entries enable row level security;
+create policy "Full access neuroscore" on neuroscore_entries for all using (true);
+
+-- Programa progress: acceso completo
+alter table programa_progress enable row level security;
+create policy "Full access programa" on programa_progress for all using (true);
+
+-- Test results: acceso completo
+alter table test_results enable row level security;
+create policy "Full access test_results" on test_results for all using (true);
 
 -- ===========================================
 -- Datos demo para comunidad

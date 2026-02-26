@@ -3,8 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import Container from '@/components/Container'
 import {
-  Brain, Send, Sparkles, Mic, Volume2, RotateCcw, ChevronDown,
-  Heart, Shield, Zap, Eye, Moon, Sun, Wind
+  Brain, Send, Sparkles, Wind, Moon, Sun, Eye
 } from 'lucide-react'
 
 type Message = {
@@ -12,7 +11,6 @@ type Message = {
   role: 'user' | 'coach'
   text: string
   timestamp: Date
-  type?: 'text' | 'exercise' | 'meditation' | 'insight'
 }
 
 type QuickAction = {
@@ -29,50 +27,13 @@ const QUICK_ACTIONS: QuickAction[] = [
   { label: 'Observar', icon: Eye, prompt: 'Enséñame la técnica del observador consciente', color: 'text-accent-blue' },
 ]
 
-const COACH_RESPONSES: Record<string, { text: string; type: Message['type'] }[]> = {
-  ansiedad: [
-    { text: 'Respira. Estoy aquí contigo. Primero, vamos a activar tu sistema nervioso parasimpático con una técnica simple.', type: 'text' },
-    { text: '🫁 EJERCICIO DE COHERENCIA CARDÍACA\n\n1. Inhala por la nariz: 5 segundos\n2. Retén el aire: 5 segundos\n3. Exhala por la boca: 5 segundos\n\nRepite 6 veces. Esto sincroniza tu ritmo cardíaco y desactiva la amígdala en menos de 2 minutos.\n\n¿Lo hacemos juntos?', type: 'exercise' },
-  ],
-  meditar: [
-    { text: 'Perfecto. Voy a guiarte una meditación basada en el protocolo de neuroplasticidad del Dr. Sanz.', type: 'text' },
-    { text: '🧘 MEDITACIÓN: OBSERVAR EL SILENCIO ENTRE PENSAMIENTOS\n\nDuración: 5 minutos\n\n1. Cierra los ojos. Siente el peso de tu cuerpo.\n2. Observa tus pensamientos como nubes que pasan.\n3. Ahora, busca el ESPACIO entre un pensamiento y otro.\n4. Ese silencio eres tú. No el pensamiento. El espacio.\n5. Cada vez que un pensamiento llegue, no lo sigas. Vuelve al espacio.\n\nEse espacio es supraconsciencia. Es donde siempre has estado, solo que no lo veías.\n\n¿Cómo ha ido?', type: 'meditation' },
-  ],
-  despertar: [
-    { text: 'El despertar no es un evento místico. Es neurociencia: es el momento en que tu corteza prefrontal toma el control sobre la amígdala y dejas de reaccionar para empezar a RESPONDER.', type: 'insight' },
-    { text: '⚡ EJERCICIO DE MICRO-DESPERTAR\n\nHazlo ahora mismo:\n\n1. Mira tus manos. Realmente míralas. Como si fuera la primera vez.\n2. Siente la temperatura del aire en tu piel.\n3. Escucha el sonido más lejano que puedas detectar.\n4. Pregúntate: "¿Quién está observando esto?"\n\nEse que observa no es tu mente. Es tu consciencia pura. Acabas de despertar por un instante.\n\nLa práctica es hacer esto 20 veces al día hasta que sea automático.', type: 'exercise' },
-  ],
-  observar: [
-    { text: 'La técnica del observador consciente es el pilar central de la supraconsciencia. El Dr. Sanz la llama "el meta-skill que cambia todos los demás".', type: 'insight' },
-    { text: '👁️ TÉCNICA DEL OBSERVADOR CONSCIENTE\n\nNivel 1 - Observar pensamientos:\n• Siéntate 2 minutos. Solo observa qué pensamientos aparecen.\n• No los juzgues. No los sigas. Solo etiquétalos: "pensamiento".\n\nNivel 2 - Observar emociones:\n• Cuando sientas algo fuerte, di: "Hay tristeza" en vez de "Estoy triste".\n• Esto activa la corteza prefrontal y desactiva la respuesta emocional automática.\n\nNivel 3 - Observar al observador:\n• Pregunta: "¿Quién está observando?"\n• No busques respuesta. La pregunta ES la práctica.\n• Aquí es donde la neurociencia se encuentra con la supraconsciencia.\n\n¿En qué nivel quieres que profundicemos?', type: 'exercise' },
-  ],
-  default: [
-    { text: 'Entiendo. Cada experiencia que describes es una oportunidad para observar cómo funciona tu mente.', type: 'text' },
-    { text: 'Déjame darte una perspectiva desde la neurociencia: tu cerebro tiene patrones automáticos (la "mente por defecto"). Lo que hacemos aquí es crear nuevos caminos neuronales conscientes. Cada vez que OBSERVAS un patrón en vez de seguirlo, estás literalmente cambiando la estructura de tu cerebro.\n\n¿Quieres que te guíe un ejercicio específico para lo que sientes ahora?', type: 'insight' },
-  ],
-}
-
-function getCoachResponse(input: string): { text: string; type: Message['type'] }[] {
-  const lower = input.toLowerCase()
-  if (lower.includes('ansiedad') || lower.includes('ansioso') || lower.includes('nervio') || lower.includes('calm'))
-    return COACH_RESPONSES.ansiedad
-  if (lower.includes('medita') || lower.includes('silencio') || lower.includes('paz'))
-    return COACH_RESPONSES.meditar
-  if (lower.includes('despiert') || lower.includes('conscienci') || lower.includes('present'))
-    return COACH_RESPONSES.despertar
-  if (lower.includes('observ') || lower.includes('pensamiento') || lower.includes('mente') || lower.includes('ego'))
-    return COACH_RESPONSES.observar
-  return COACH_RESPONSES.default
-}
-
 export default function IACoachPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'welcome',
       role: 'coach',
-      text: 'Hola. Soy tu Coach de Consciencia. Estoy aquí para guiarte en tu camino de supraconsciencia con herramientas basadas en neurociencia.\n\n¿Cómo te sientes ahora mismo? O si prefieres, elige una acción rápida.',
+      text: 'Hola. Soy tu Coach de Consciencia, impulsado por inteligencia artificial y neurociencia.\n\nPuedo guiarte con ejercicios de respiración, meditación, metacognición y presencia. Cada respuesta es única para ti.\n\n¿Cómo te sientes ahora mismo?',
       timestamp: new Date(),
-      type: 'text',
     },
   ])
   const [input, setInput] = useState('')
@@ -85,45 +46,56 @@ export default function IACoachPage() {
     }
   }, [messages, isTyping])
 
-  const sendMessage = (text: string) => {
-    if (!text.trim()) return
+  const sendMessage = async (text: string) => {
+    if (!text.trim() || isTyping) return
 
     const userMsg: Message = {
       id: Date.now().toString(),
       role: 'user',
       text: text.trim(),
       timestamp: new Date(),
-      type: 'text',
     }
 
-    setMessages((prev) => [...prev, userMsg])
+    const updatedMessages = [...messages, userMsg]
+    setMessages(updatedMessages)
     setInput('')
     setIsTyping(true)
 
-    const responses = getCoachResponse(text)
-    let delay = 1200
+    try {
+      const res = await fetch('/api/ia-coach', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: updatedMessages.map(m => ({
+            role: m.role,
+            text: m.text,
+          })),
+        }),
+      })
 
-    responses.forEach((resp, i) => {
-      setTimeout(() => {
-        const coachMsg: Message = {
-          id: `${Date.now()}-${i}`,
+      const data = await res.json()
+
+      const coachMsg: Message = {
+        id: `coach-${Date.now()}`,
+        role: 'coach',
+        text: data.text || 'No he podido procesar tu mensaje. Inténtalo de nuevo.',
+        timestamp: new Date(),
+      }
+
+      setMessages(prev => [...prev, coachMsg])
+    } catch {
+      setMessages(prev => [
+        ...prev,
+        {
+          id: `error-${Date.now()}`,
           role: 'coach',
-          text: resp.text,
+          text: 'Ha habido un error de conexión. Inténtalo de nuevo en unos segundos.',
           timestamp: new Date(),
-          type: resp.type,
-        }
-        setMessages((prev) => [...prev, coachMsg])
-        if (i === responses.length - 1) setIsTyping(false)
-      }, delay)
-      delay += 1500 + resp.text.length * 8
-    })
-  }
-
-  const typeColors = {
-    text: '',
-    exercise: 'border-l-2 border-green-500/40 pl-3',
-    meditation: 'border-l-2 border-purple-500/40 pl-3',
-    insight: 'border-l-2 border-yellow-500/40 pl-3',
+        },
+      ])
+    } finally {
+      setIsTyping(false)
+    }
   }
 
   return (
@@ -142,7 +114,7 @@ export default function IACoachPage() {
                 IA Coach
                 <Sparkles className="w-4 h-4 text-purple-400" />
               </h1>
-              <p className="text-text-muted text-xs">Supraconsciencia guiada por neurociencia</p>
+              <p className="text-text-muted text-xs">Inteligencia artificial + neurociencia</p>
             </div>
           </div>
         </Container>
@@ -156,7 +128,8 @@ export default function IACoachPage() {
               <button
                 key={action.label}
                 onClick={() => sendMessage(action.prompt)}
-                className="shrink-0 flex items-center gap-1.5 px-3 py-2 glass rounded-full text-xs font-medium text-white active:scale-95 transition-transform"
+                disabled={isTyping}
+                className="shrink-0 flex items-center gap-1.5 px-3 py-2 glass rounded-full text-xs font-medium text-white active:scale-95 transition-transform disabled:opacity-40"
               >
                 <action.icon className={`w-3.5 h-3.5 ${action.color}`} />
                 {action.label}
@@ -182,9 +155,7 @@ export default function IACoachPage() {
                       : 'glass text-white rounded-bl-md'
                   }`}
                 >
-                  <div className={msg.type ? typeColors[msg.type] || '' : ''}>
-                    <p className="text-sm leading-relaxed whitespace-pre-line">{msg.text}</p>
-                  </div>
+                  <p className="text-sm leading-relaxed whitespace-pre-line">{msg.text}</p>
                 </div>
               </div>
             ))}
@@ -214,11 +185,12 @@ export default function IACoachPage() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && sendMessage(input)}
               placeholder="¿Cómo te sientes? ¿Qué necesitas?"
-              className="flex-1 bg-transparent text-white text-sm px-3 py-2 placeholder:text-text-muted focus:outline-none"
+              disabled={isTyping}
+              className="flex-1 bg-transparent text-white text-sm px-3 py-2 placeholder:text-text-muted focus:outline-none disabled:opacity-50"
             />
             <button
               onClick={() => sendMessage(input)}
-              disabled={!input.trim()}
+              disabled={!input.trim() || isTyping}
               className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400 active:scale-90 transition-transform disabled:opacity-30"
             >
               <Send className="w-4 h-4" />
