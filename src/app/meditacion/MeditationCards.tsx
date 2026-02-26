@@ -20,28 +20,38 @@ const meditations: Meditation[] = [
   { title: 'Calma rápida', minutes: 3, icon: Wind, description: 'Respiración guiada para cortar ansiedad en 3 minutos.', free: true, theme: 'Ansiedad' },
   { title: 'Reset mental', minutes: 5, icon: Brain, description: 'Limpia tu mente y empieza de cero. Ideal para saturación.', free: true, theme: 'Ansiedad' },
   { title: 'Reducir ansiedad', minutes: 8, icon: Timer, description: 'Reduce la activación del sistema nervioso simpático.', free: false, theme: 'Ansiedad' },
+  { title: 'Desactivar el estrés', minutes: 10, icon: Shield, description: 'Técnica de relajación muscular progresiva para cortar el cortisol.', free: false, theme: 'Ansiedad' },
   { title: 'Ansiedad profunda', minutes: 15, icon: Shield, description: 'Sesión completa para desactivar la respuesta de estrés crónico.', free: false, theme: 'Ansiedad' },
+  { title: 'Liberación total', minutes: 20, icon: Wind, description: 'Body scan + respiración + visualización para soltar toda tensión acumulada.', free: false, theme: 'Ansiedad' },
 
   // Presencia / Atención
   { title: 'Micro-presencia', minutes: 3, icon: Crosshair, description: '3 minutos para volver al aquí y ahora.', free: true, theme: 'Presencia' },
   { title: 'Atención plena', minutes: 10, icon: Eye, description: 'Entrena tu foco atencional sin distracción.', free: false, theme: 'Presencia' },
+  { title: 'El observador', minutes: 12, icon: Eye, description: 'Observa tus pensamientos sin identificarte. Separación consciente.', free: false, theme: 'Presencia' },
   { title: 'Presencia profunda', minutes: 15, icon: Crosshair, description: 'Desactiva la red neuronal por defecto. Estado de observación pura.', free: false, theme: 'Presencia' },
   { title: 'Flow state', minutes: 20, icon: Zap, description: 'Meditación para entrar en estado de flujo antes de trabajar.', free: false, theme: 'Presencia' },
 
   // Sueño
   { title: 'Pre-sueño', minutes: 5, icon: Moon, description: 'Relajación rápida para facilitar el sueño.', free: true, theme: 'Sueño' },
+  { title: 'Yoga Nidra express', minutes: 10, icon: Moon, description: 'Relajación consciente profunda. El estado entre vigilia y sueño.', free: false, theme: 'Sueño' },
   { title: 'Insomnio leve', minutes: 12, icon: Moon, description: 'Relaja cuerpo y mente para un sueño reparador.', free: false, theme: 'Sueño' },
+  { title: 'Viaje al descanso', minutes: 15, icon: Moon, description: 'Visualización guiada que lleva tu mente a un lugar de paz total.', free: false, theme: 'Sueño' },
   { title: 'Sueño profundo', minutes: 20, icon: Moon, description: 'Sesión completa de relajación progresiva para insomnio crónico.', free: false, theme: 'Sueño' },
 
   // Emociones
   { title: 'Autocompasión', minutes: 5, icon: Heart, description: 'Conecta con la bondad hacia ti mismo.', free: true, theme: 'Emociones' },
   { title: 'Soltar el enfado', minutes: 8, icon: Flame, description: 'Observa la ira sin reaccionar. Déjala pasar.', free: false, theme: 'Emociones' },
+  { title: 'Duelo consciente', minutes: 10, icon: Heart, description: 'Acompaña el dolor sin huir. Transforma el sufrimiento en aceptación.', free: false, theme: 'Emociones' },
   { title: 'Regulación emocional', minutes: 12, icon: Heart, description: 'Técnicas para procesar emociones sin reprimirlas.', free: false, theme: 'Emociones' },
+  { title: 'Perdón y soltar', minutes: 15, icon: Heart, description: 'Libérate del resentimiento. El perdón es para ti, no para el otro.', free: false, theme: 'Emociones' },
+  { title: 'Amor incondicional', minutes: 20, icon: Heart, description: 'Metta bhavana: expande la compasión desde ti hacia todos los seres.', free: false, theme: 'Emociones' },
 
   // Energía / Mañana
   { title: 'Despertar consciente', minutes: 5, icon: Sun, description: 'Empieza el día con intención y claridad mental.', free: true, theme: 'Energía' },
   { title: 'Activación matutina', minutes: 8, icon: Zap, description: 'Respiración energizante + visualización del día.', free: false, theme: 'Energía' },
   { title: 'Claridad y foco', minutes: 10, icon: Target, description: 'Prepara tu mente para máximo rendimiento.', free: false, theme: 'Energía' },
+  { title: 'Intención del día', minutes: 15, icon: Sun, description: 'Visualización completa: define tu día antes de vivirlo. Programa tu mente.', free: false, theme: 'Energía' },
+  { title: 'Energía vital', minutes: 20, icon: Zap, description: 'Respiración Wim Hof adaptada + visualización energizante para recargar cuerpo y mente.', free: false, theme: 'Energía' },
 ]
 
 const themes = ['Todas', 'Ansiedad', 'Presencia', 'Sueño', 'Emociones', 'Energía']

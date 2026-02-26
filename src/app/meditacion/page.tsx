@@ -23,7 +23,7 @@ export default function MeditacionPage() {
               Meditación
             </h1>
             <p className="text-text-secondary text-base animate-fade-in-up">
-              17 sesiones guiadas. Filtra por tema y duración.
+              26 sesiones guiadas. Filtra por tema y duración.
             </p>
           </div>
         </Container>
