@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import Container from '@/components/Container'
 import FadeInSection from '@/components/FadeInSection'
 import {
   Users, MessageCircle, Video, Calendar, Heart, Star, Send,
-  Crown, Flame, Clock, ChevronRight, Radio, Globe, Award, X, Loader2
+  Crown, Flame, Clock, ChevronRight, Radio, Globe, Award, X, Loader2,
+  Zap, Brain
 } from 'lucide-react'
 
 type Post = {
@@ -19,6 +20,50 @@ type Post = {
   liked: boolean
   replies: number
   tag: string
+}
+
+type ChatMsg = {
+  id: string
+  autor: string
+  avatar: string
+  nivel: string
+  texto: string
+  hora: string
+  esGuia?: boolean
+}
+
+const SALAS = [
+  { id: 'general', nombre: 'General', icon: Zap, color: 'text-accent-blue', desc: 'Conversación abierta' },
+  { id: 'dudas', nombre: 'Dudas', icon: MessageCircle, color: 'text-purple-400', desc: 'Preguntas sobre el método' },
+  { id: 'logros', nombre: 'Logros', icon: Star, color: 'text-yellow-400', desc: 'Comparte tus avances' },
+  { id: 'silencio', nombre: 'Sala de silencio', icon: Brain, color: 'text-cyan-400', desc: 'Solo presencia' },
+]
+
+const CHAT_INICIAL: Record<string, ChatMsg[]> = {
+  general: [
+    { id: '1', autor: 'Lucía M.', avatar: '🧠', nivel: 'Nivel 28', texto: 'Buenos días comunidad. Acabo de terminar la meditación de las 7am. Hoy he notado por primera vez ese espacio entre pensamiento y reacción. Es muy sutil pero está ahí.', hora: '07:14', },
+    { id: '2', autor: 'Dr. Berzosa', avatar: '🔬', nivel: 'Guía', texto: 'Lucía, eso es exactamente la corteza prefrontal frenando la amígdala. Ese microsegundo de pausa ES neuroplasticidad en acción. Sigue así.', hora: '07:18', esGuia: true },
+    { id: '3', autor: 'Pablo R.', avatar: '🌊', nivel: 'Nivel 15', texto: 'Yo llevo 3 semanas y aún me cuesta no engancharme a los pensamientos. ¿Es normal?', hora: '07:22', },
+    { id: '4', autor: 'Ana G.', avatar: '✨', nivel: 'Nivel 42', texto: 'Pablo, totalmente normal. La DMN lleva toda tu vida funcionando en automático. Dale tiempo. Yo no noté cambio real hasta la semana 4.', hora: '07:25', },
+    { id: '5', autor: 'Carlos V.', avatar: '🧘', nivel: 'Nivel 33', texto: '¿Alguien ha probado la meditación nueva de "Observar sin nombre"? Es brutal. 15 minutos que se pasan volando.', hora: '07:31', },
+    { id: '6', autor: 'Marina S.', avatar: '🌙', nivel: 'Nivel 19', texto: 'Día 12 de racha. Hoy tuve un momento de estrés en el trabajo y automáticamente usé el R.E.U.R.O.: detectar, nombrar, elegir. Funcionó.', hora: '08:02', },
+    { id: '7', autor: 'Dr. Berzosa', avatar: '🔬', nivel: 'Guía', texto: 'Marina, eso se llama "transferencia". Cuando lo que practicas en la meditación aparece espontáneamente en tu vida real. Ahí es cuando sabes que tu cerebro está cambiando de verdad. Enhorabuena.', hora: '08:05', esGuia: true },
+  ],
+  dudas: [
+    { id: '1', autor: 'Javier L.', avatar: '🤔', nivel: 'Nivel 8', texto: '¿Cuál es la diferencia entre la N (neutralizar) y la O (observar)? Me parecen similares.', hora: '09:12', },
+    { id: '2', autor: 'Dr. Berzosa', avatar: '🔬', nivel: 'Guía', texto: 'Buena pregunta Javier. La N es el primer paso: reconoces que un pensamiento es solo un pensamiento (reduces DMN). La O es el nivel avanzado: no solo lo reconoces, sino que te das cuenta de que TÚ no eres ese pensamiento. Es la diferencia entre "eso es un pensamiento" y "¿quién está observando ese pensamiento?". Metacognición pura.', hora: '09:18', esGuia: true },
+    { id: '3', autor: 'Elena R.', avatar: '💡', nivel: 'Nivel 22', texto: '¿El escaneo corporal (la U) se puede hacer con los ojos abiertos? En el trabajo no puedo cerrar los ojos.', hora: '10:45', },
+    { id: '4', autor: 'Ana G.', avatar: '✨', nivel: 'Nivel 42', texto: 'Elena, sí. La ínsula funciona igual. Yo lo hago en reuniones aburridas: pies en el suelo, sensación de las manos, respiración. Nadie se entera y tú vuelves al presente.', hora: '10:52', },
+  ],
+  logros: [
+    { id: '1', autor: 'Diego M.', avatar: '🏆', nivel: 'Nivel 50', texto: '¡50 días de racha! Nunca pensé que llegaría. Mi NeuroScore lleva 2 semanas por encima de 85.', hora: '06:30', },
+    { id: '2', autor: 'Sara P.', avatar: '🎯', nivel: 'Nivel 31', texto: 'Primer día que completo los 5 pilares del score: meditación + ejercicio + test + despertar + diario. 100/100. Se puede.', hora: '11:20', },
+    { id: '3', autor: 'Marcos T.', avatar: '🧬', nivel: 'Nivel 27', texto: 'Mi test de ruido mental bajó de 78 a 34 en 6 semanas. La neuroplasticidad es real.', hora: '14:05', },
+  ],
+  silencio: [
+    { id: '1', autor: 'Sistema', avatar: '🔇', nivel: '', texto: 'Esta sala es para practicar presencia compartida. Sin conversación. Solo estar.', hora: '', },
+    { id: '2', autor: 'Sistema', avatar: '🧘', nivel: '', texto: '12 personas están en silencio consciente ahora mismo.', hora: '', },
+  ],
 }
 
 type SesionGrupal = {
@@ -84,10 +129,14 @@ const tagConfig: Record<string, { color: string; bg: string }> = {
 export default function ComunidadPage() {
   const [posts, setPosts] = useState<Post[]>([])
   const [mounted, setMounted] = useState(false)
-  const [tab, setTab] = useState<'foro' | 'sesiones'>('foro')
+  const [tab, setTab] = useState<'foro' | 'sesiones' | 'sala'>('foro')
   const [nuevoPost, setNuevoPost] = useState('')
   const [showNuevoPost, setShowNuevoPost] = useState(false)
   const [posting, setPosting] = useState(false)
+  const [salaActiva, setSalaActiva] = useState('general')
+  const [chatMsg, setChatMsg] = useState('')
+  const [chatMsgs, setChatMsgs] = useState<Record<string, ChatMsg[]>>(CHAT_INICIAL)
+  const chatEndRef = useRef<HTMLDivElement>(null)
 
   const loadPosts = useCallback(async () => {
     try {
@@ -158,6 +207,29 @@ export default function ComunidadPage() {
     setPosting(false)
   }
 
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [chatMsgs, salaActiva])
+
+  const sendChatMsg = () => {
+    if (!chatMsg.trim() || salaActiva === 'silencio') return
+    const now = new Date()
+    const hora = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
+    const newMsg: ChatMsg = {
+      id: Date.now().toString(),
+      autor: 'Tú',
+      avatar: '🌟',
+      nivel: 'Observador',
+      texto: chatMsg.trim(),
+      hora,
+    }
+    setChatMsgs((prev) => ({
+      ...prev,
+      [salaActiva]: [...(prev[salaActiva] || []), newMsg],
+    }))
+    setChatMsg('')
+  }
+
   if (!mounted) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -218,7 +290,8 @@ export default function ComunidadPage() {
           <div className="flex gap-1 glass rounded-xl p-1">
             {[
               { id: 'foro' as const, label: 'Foro', icon: MessageCircle },
-              { id: 'sesiones' as const, label: 'Sesiones en vivo', icon: Video },
+              { id: 'sala' as const, label: 'Sala', icon: Zap },
+              { id: 'sesiones' as const, label: 'En vivo', icon: Video },
             ].map((t) => (
               <button
                 key={t.id}
@@ -299,6 +372,113 @@ export default function ComunidadPage() {
                     </div>
                   )
                 })}
+              </div>
+            )}
+
+            {tab === 'sala' && (
+              <div>
+                {/* Selector de salas */}
+                <div className="flex gap-2 overflow-x-auto pb-3 scrollbar-hide mb-3">
+                  {SALAS.map((sala) => (
+                    <button
+                      key={sala.id}
+                      onClick={() => setSalaActiva(sala.id)}
+                      className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all shrink-0 ${
+                        salaActiva === sala.id
+                          ? 'bg-accent-blue text-white shadow-lg shadow-accent-blue/20'
+                          : 'glass text-text-muted'
+                      }`}
+                    >
+                      <sala.icon className="w-3.5 h-3.5" />
+                      {sala.nombre}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Info de sala */}
+                <div className="flex items-center justify-between px-1 mb-3">
+                  <p className="text-text-muted text-xs">
+                    {SALAS.find((s) => s.id === salaActiva)?.desc}
+                  </p>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
+                    <span className="text-green-400 text-[10px] font-medium">
+                      {salaActiva === 'silencio' ? '12' : salaActiva === 'general' ? '34' : salaActiva === 'dudas' ? '18' : '9'} online
+                    </span>
+                  </div>
+                </div>
+
+                {/* Mensajes */}
+                <div className="glass rounded-2xl overflow-hidden">
+                  <div className="h-[420px] overflow-y-auto p-4 space-y-4 scrollbar-hide">
+                    {(chatMsgs[salaActiva] || []).map((msg) => (
+                      <div key={msg.id} className={`flex gap-3 ${msg.autor === 'Sistema' ? 'justify-center' : ''}`}>
+                        {msg.autor === 'Sistema' ? (
+                          <div className="px-4 py-2 rounded-full bg-cyan-500/5 border border-cyan-500/10">
+                            <p className="text-cyan-400 text-xs text-center">
+                              {msg.avatar} {msg.texto}
+                            </p>
+                          </div>
+                        ) : (
+                          <>
+                            <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm shrink-0 ${
+                              msg.esGuia ? 'bg-yellow-500/10 border border-yellow-500/20' : 'bg-white/5'
+                            }`}>
+                              {msg.avatar}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-0.5">
+                                <span className={`text-xs font-medium ${msg.esGuia ? 'text-yellow-400' : 'text-white'}`}>
+                                  {msg.autor}
+                                </span>
+                                {msg.esGuia && (
+                                  <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400 font-medium">
+                                    Guía
+                                  </span>
+                                )}
+                                <span className="text-text-muted text-[10px]">{msg.nivel}</span>
+                                {msg.hora && <span className="text-text-muted text-[10px]">{msg.hora}</span>}
+                              </div>
+                              <p className={`text-sm leading-relaxed ${
+                                msg.esGuia ? 'text-white/90 bg-yellow-500/5 rounded-xl rounded-tl-none p-3 border border-yellow-500/10' : 'text-text-secondary'
+                              }`}>
+                                {msg.texto}
+                              </p>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    ))}
+                    <div ref={chatEndRef} />
+                  </div>
+
+                  {/* Input */}
+                  {salaActiva !== 'silencio' ? (
+                    <div className="border-t border-dark-border/50 p-3">
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={chatMsg}
+                          onChange={(e) => setChatMsg(e.target.value)}
+                          onKeyDown={(e) => e.key === 'Enter' && sendChatMsg()}
+                          placeholder="Escribe un mensaje..."
+                          className="flex-1 px-4 py-2.5 glass-light rounded-xl text-white text-sm placeholder:text-text-muted focus:outline-none focus:ring-1 focus:ring-accent-blue/50"
+                        />
+                        <button
+                          onClick={sendChatMsg}
+                          disabled={!chatMsg.trim()}
+                          className="px-4 py-2.5 bg-accent-blue rounded-xl text-white active:scale-95 transition-transform disabled:opacity-30"
+                        >
+                          <Send className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="border-t border-dark-border/50 p-4 text-center">
+                      <p className="text-cyan-400/60 text-xs">Esta sala es solo para presencia compartida en silencio</p>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
