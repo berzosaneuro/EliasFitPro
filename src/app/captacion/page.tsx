@@ -295,10 +295,10 @@ export default function CaptacionPage() {
                 <Gift className="w-8 h-8 text-accent-blue" />
               </div>
               <h2 className="font-heading text-2xl font-bold text-white mb-2">
-                Guía gratuita: 7 días de supraconsciencia
+                Plan gratuito: 7 días de neurociencia aplicada
               </h2>
               <p className="text-text-secondary mb-6 max-w-md mx-auto">
-                Recibe un mini-programa de 7 días con ejercicios de neuroplasticidad y meditación basados en el Método N.E.U.R.O.
+                7 ejercicios prácticos del Método N.E.U.R.O. con la base neurocientífica de cada uno. Gratis al suscribirte.
               </p>
 
               {!enviado ? (
@@ -322,14 +322,16 @@ export default function CaptacionPage() {
                     disabled={!email.trim() || loading}
                     className="px-6 py-3 bg-accent-blue rounded-xl text-white font-medium text-sm active:scale-95 transition-transform disabled:opacity-40"
                   >
-                    {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Quiero la guía'}
+                    {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Acceder gratis'}
                   </button>
                 </div>
               ) : (
                 <div className="glass-light rounded-2xl p-5 max-w-md mx-auto">
                   <Check className="w-8 h-8 text-green-400 mx-auto mb-2" />
-                  <p className="text-white font-medium">¡Listo! Revisa tu email</p>
-                  <p className="text-text-muted text-xs mt-1">Te hemos enviado la guía de 7 días.</p>
+                  <p className="text-white font-medium">¡Listo!</p>
+                  <Link href="/plan-7-dias" className="inline-flex items-center gap-2 mt-3 px-5 py-2.5 bg-accent-blue rounded-xl text-white font-medium text-sm active:scale-95 transition-transform">
+                    Empezar el plan de 7 días <ChevronRight className="w-4 h-4" />
+                  </Link>
                 </div>
               )}
 

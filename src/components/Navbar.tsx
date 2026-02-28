@@ -29,6 +29,7 @@ const mobileLinks = [
     { href: '/sonidos', label: 'Sonidos' },
     { href: '/ejercicios', label: 'Ejercicios' },
     { href: '/sos', label: 'SOS' },
+    { href: '/plan-7-dias', label: '7 Días Gratis' },
     { href: '/programa', label: '21 Días' },
     { href: '/retos', label: 'Retos' },
   ]},
