@@ -9,13 +9,29 @@ import { AdminProvider } from '@/context/AdminContext'
 
 export const metadata: Metadata = {
   title: 'NeuroConciencia — Berzosa Neuro',
-  description: 'Supraconciencia, metacognición y neuroplasticidad para apagar el ruido mental y vivir desde el presente.',
+  description: 'Entrena tu cerebro. Apaga el ruido mental. Vive desde el presente. Neurociencia aplicada a la conciencia.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
     title: 'NeuroConciencia',
   },
+  openGraph: {
+    title: 'NeuroConciencia — Entrena tu cerebro',
+    description: 'Neuroplasticidad, metacognición y presencia. El método N.E.U.R.O. para apagar el ruido mental y vivir despierto. Sin misticismo.',
+    siteName: 'NeuroConciencia',
+    locale: 'es_ES',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'NeuroConciencia — Entrena tu cerebro',
+    description: 'Neuroplasticidad, metacognición y presencia. El método N.E.U.R.O. para apagar el ruido mental.',
+    creator: '@berzosaneuro',
+  },
+  keywords: ['neurociencia', 'meditación', 'neuroplasticidad', 'metacognición', 'conciencia', 'método neuro', 'ruido mental', 'presencia', 'berzosa neuro'],
+  authors: [{ name: 'Berzosa Neuro' }],
+  creator: 'Berzosa Neuro',
 }
 
 export const viewport: Viewport = {

@@ -112,7 +112,7 @@ export default function CaptacionPage() {
               ¿Por qué NeuroConciencia es diferente?
             </h2>
             <p className="text-text-secondary text-center mb-8 max-w-lg mx-auto">
-              Inspirado en los métodos del Dr. Manuel Sanz y líderes en supraconsciencia.
+              Basado en neurociencia aplicada, neuroplasticidad y metacognición.
             </p>
             <div className="grid md:grid-cols-3 gap-3">
               {[
@@ -156,7 +156,7 @@ export default function CaptacionPage() {
               {[
                 {
                   num: '01', titulo: 'Observar sin juzgar', icon: Eye, color: 'text-purple-400',
-                  desc: 'Aprende a ver tus pensamientos como nubes. La técnica del observador consciente del Dr. Sanz aplicada con guía paso a paso.',
+                  desc: 'Aprende a ver tus pensamientos como nubes. La técnica del observador consciente del Método N.E.U.R.O. aplicada con guía paso a paso.',
                 },
                 {
                   num: '02', titulo: 'Rewire neuronal', icon: Zap, color: 'text-accent-blue',
@@ -298,7 +298,7 @@ export default function CaptacionPage() {
                 Guía gratuita: 7 días de supraconsciencia
               </h2>
               <p className="text-text-secondary mb-6 max-w-md mx-auto">
-                Recibe un mini-programa de 7 días con ejercicios de neuroplasticidad y meditación basados en el método del Dr. Manuel Sanz.
+                Recibe un mini-programa de 7 días con ejercicios de neuroplasticidad y meditación basados en el Método N.E.U.R.O.
               </p>
 
               {!enviado ? (

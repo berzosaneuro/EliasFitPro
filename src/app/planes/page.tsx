@@ -194,7 +194,7 @@ export default function PlanesPage() {
         </div>
 
         <p className="text-center text-text-muted text-xs mt-8 max-w-lg mx-auto">
-          El botón &quot;Activar Premium&quot; simula la suscripción localmente. Para pagos reales se integrará Stripe próximamente.
+          Puedes explorar todas las funcionalidades Premium de forma local. La pasarela de pago se activará en breve.
         </p>
       </Container>
     </div>

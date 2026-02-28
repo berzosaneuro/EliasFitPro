@@ -1,4 +1,4 @@
-import { Brain } from 'lucide-react'
+import { Brain, Instagram, Mail } from 'lucide-react'
 
 export default function Footer() {
   return (
@@ -8,23 +8,25 @@ export default function Footer() {
           <div className="flex items-center gap-2">
             <Brain className="w-4 h-4 text-accent-blue" />
             <span className="text-text-muted text-sm">
-              NeuroConciencia · Berzosa Neuro
+              NeuroConciencia · Berzosa Neuro · {new Date().getFullYear()}
             </span>
           </div>
           <div className="flex items-center gap-6">
             <a
-              href="https://instagram.com"
+              href="https://instagram.com/berzosaneuro"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-text-muted hover:text-white transition-colors"
+              className="flex items-center gap-1.5 text-sm text-text-muted hover:text-white transition-colors"
             >
-              Instagram
+              <Instagram className="w-4 h-4" />
+              @berzosaneuro
             </a>
             <a
-              href="mailto:contacto@neuroconciencia.com"
-              className="text-sm text-text-muted hover:text-white transition-colors"
+              href="mailto:berzosaneuro@gmail.com"
+              className="flex items-center gap-1.5 text-sm text-text-muted hover:text-white transition-colors"
             >
-              Email
+              <Mail className="w-4 h-4" />
+              Contacto
             </a>
           </div>
         </div>
